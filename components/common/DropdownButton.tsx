@@ -3,7 +3,7 @@ import CircularProgress from './CircularProgress';
 
 interface DropdownButtonProps {
   label: string;
-  options: { label: string; onClick: () => void }[];
+  options: { label: string; onClick: () => void; onPreview: (() => void) | null }[];
   isLoading?: boolean;
   progress: number;
 }
@@ -27,6 +27,14 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
     setIsOpen(false);
   };
 
+  const handlePreviewClick = (onPreview: (() => void) | null) => {
+    if (onPreview) {
+        onPreview();
+        setIsOpen(false);
+    }
+  };
+
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <div>
@@ -34,10 +42,10 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           disabled={isLoading}
-          className="inline-flex justify-center items-center w-full rounded-lg border border-gray-600 shadow-sm px-6 py-3 bg-gray-600 text-base font-bold text-white hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-yellow-400 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex justify-center items-center w-full rounded-lg border border-gray-300 shadow-sm px-6 py-3 bg-white text-base font-bold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{minHeight: '52px', minWidth: '180px'}}
         >
-          {isLoading ? <CircularProgress progress={progress} /> : (
+          {isLoading ? <CircularProgress progress={progress} color="dark" /> : (
             <>
             {label}
             <svg className="-mr-1 ml-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -50,21 +58,30 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
       
       {isOpen && (
         <div 
-          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+          className="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
             {options.map((option) => (
-                <button
-                    key={option.label}
-                    onClick={() => handleOptionClick(option.onClick)}
-                    className="w-full text-left text-gray-200 block px-4 py-2 text-sm hover:bg-gray-600 hover:text-white"
-                    role="menuitem"
-                >
-                    {option.label}
-                </button>
+                <div key={option.label} className="flex justify-between items-center px-2 py-1 text-sm group">
+                    <button
+                        onClick={() => handleOptionClick(option.onClick)}
+                        className="w-full text-left text-gray-700 block px-2 py-2 hover:bg-gray-100 rounded-md"
+                        role="menuitem"
+                    >
+                        {option.label}
+                    </button>
+                    {option.onPreview && (
+                         <button
+                            onClick={() => handlePreviewClick(option.onPreview)}
+                            className="ml-2 px-2 py-1 text-xs font-bold rounded capitalize bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
+                         >
+                             Preview
+                         </button>
+                    )}
+                </div>
             ))}
           </div>
         </div>

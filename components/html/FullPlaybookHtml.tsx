@@ -9,7 +9,6 @@ interface FullPlaybookHtmlProps {
 
 const FullPlaybookHtml: React.FC<FullPlaybookHtmlProps> = ({ playbook }) => {
   const emptyFunc = () => {};
-  const emptyChat = { history: [], isLoading: false, onSendMessage: emptyFunc };
   
   return (
     <FullPlaybook
@@ -18,14 +17,20 @@ const FullPlaybookHtml: React.FC<FullPlaybookHtmlProps> = ({ playbook }) => {
       // Provide dummy props for functions not used in static mode
       onDownloadAsset={emptyFunc}
       onPreviewAsset={emptyFunc}
+      onPreviewPdf={emptyFunc}
       isAnyPdfGenerating={false}
       generatingAsset={null}
       onDownloadAllAssets={emptyFunc}
       generatingAssetBundleFor={null}
-      chatHistory={[]}
-      isChatLoading={false}
-      onSendMessage={emptyFunc}
       pdfProgress={0}
+      onDownloadZip={emptyFunc}
+      isZipping={false}
+      zipProgress={0}
+      kpiEntries={[]}
+      weeklyDebriefs={[]}
+      onSaveKpiEntry={emptyFunc}
+      onGenerateDebrief={emptyFunc}
+      isGeneratingDebrief={false}
     />
   );
 };

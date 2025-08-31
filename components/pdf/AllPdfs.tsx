@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { GeneratedPlaybook, OfferStackItem, GeneratedOffer, BusinessData } from '../../types';
 import FullPlaybookPdf from './FullPlaybookPdf';
@@ -70,10 +71,10 @@ const AllPdfs: React.FC<AllPdfsProps> = ({ playbook, businessData, type, assetBu
         );
     }
     
-    if (assetBundle) {
+    if (type === 'asset-bundle' && assetBundle) {
         return <ValueStackAssetsPdf offer={assetBundle} />;
     }
-    if (singleAsset) {
+    if (type === 'single-asset' && singleAsset) {
         return <AssetPdf asset={singleAsset} />;
     }
 

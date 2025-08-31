@@ -4,14 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hormozi AI Business Plan</title>
+    <title>Trillion Business Plan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* Using a more Hormozi-esque font */
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+      :root {
+        --bg-light: #ffffff;
+        --bg-muted: #f8f9fa;
+        --text-dark: #212121;
+        --text-light: #5f5f5f;
+        --border-color: #dee2e6;
+        --primary-color: #147273; /* Dark Teal */
+        --accent-color: #82D5E3; /* Light Blue */
+      }
       body {
-        /* Resetting body margin is good practice for embeds */
         margin: 0;
+        background-color: var(--bg-muted);
+        color: var(--text-dark);
       }
       #root {
         font-family: 'Inter', sans-serif;
@@ -33,7 +42,7 @@
 </script>
 </head>
   <body>
-    <div id="root" class="bg-gray-900 text-gray-200"></div>
+    <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

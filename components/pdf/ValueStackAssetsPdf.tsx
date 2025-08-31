@@ -2,43 +2,102 @@ import React from 'react';
 import { GeneratedOffer, OfferStackItem } from '../../types';
 import MarkdownRenderer from '../common/MarkdownRenderer';
 
-// --- Reusable PDF Components for a clean, professional, print-friendly style ---
-const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-5xl font-black text-gray-900 tracking-tight">{children}</h1>;
-const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-xl text-gray-600 mt-2">{children}</p>;
+const PageLayout: React.FC<{ children: React.ReactNode, isCover?: boolean }> = ({ children, isCover = false }) => (
+    <div className={`p-12 bg-white font-sans text-gray-800 relative overflow-hidden break-before-page`} style={{ fontFamily: 'Inter, sans-serif', width: '800px', minHeight: '1131px' }}>
+         <div style={{
+            position: 'absolute',
+            top: '-60px',
+            left: '-60px',
+            width: '200px',
+            height: '200px',
+            backgroundColor: 'rgba(20, 114, 115, 0.8)', // dark teal
+            clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+        }}></div>
+         <div style={{
+            position: 'absolute',
+            top: '-80px',
+            left: '40px',
+            width: '200px',
+            height: '200px',
+            backgroundColor: 'rgba(130, 213, 227, 0.7)', // light blue
+            clipPath: 'polygon(0 0, 100% 0, 0 100%)'
+        }}></div>
+        {!isCover && <>
+            <div style={{
+                position: 'absolute',
+                bottom: '-60px',
+                right: '-60px',
+                width: '250px',
+                height: '250px',
+                backgroundColor: 'rgba(20, 114, 115, 0.8)',
+                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+            }}></div>
+            <div style={{
+                position: 'absolute',
+                bottom: '-80px',
+                right: '40px',
+                width: '250px',
+                height: '250px',
+                backgroundColor: 'rgba(130, 213, 227, 0.7)',
+                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)'
+            }}></div>
+        </>}
+        <div className="relative z-10 flex flex-col h-full" style={{minHeight: '1035px'}}>
+            {children}
+        </div>
+    </div>
+);
 
-const AssetSection: React.FC<{ asset: NonNullable<OfferStackItem['asset']> }> = ({ asset }) => (
-    <div className="break-before-page pt-12">
-        <header className="mb-8 pb-4 border-b border-gray-300">
-            <p className="text-gray-500 font-semibold uppercase tracking-widest text-xs capitalize">Asset // {asset.type}</p>
-            <h1 className="text-3xl font-bold text-gray-800 mt-1">{asset.name}</h1>
-        </header>
-        <main>
-            <div className="p-6 border border-gray-200 rounded-lg bg-gray-50/50">
+
+const CoverPage: React.FC<{ offer: GeneratedOffer }> = ({ offer }) => (
+    <PageLayout isCover={true}>
+        <div className="flex flex-col h-full pt-20">
+            <p className="font-semibold text-gray-600 uppercase tracking-widest">Complete Asset Library For</p>
+            <h1 className="text-6xl font-black tracking-tight mt-4 max-w-3xl text-[#147273]">"{offer.name}"</h1>
+            <div className="mt-12 mb-8 h-1 bg-[#82D5E3] w-1/4"></div>
+            <p className="text-xl text-gray-700 mt-4 max-w-2xl">All the templates, guides, and scripts you need to deliver on your promise.</p>
+            <div className="mt-auto">
+                <p className="font-bold text-lg">Trillion Business</p>
+            </div>
+        </div>
+    </PageLayout>
+);
+
+const AssetHeader: React.FC<{ type: string; title: string }> = ({ type, title }) => (
+    <header className="mb-8 pb-4 border-b-2 border-gray-200">
+        <div className="flex justify-between items-center text-sm text-gray-500">
+            <p className="font-bold uppercase tracking-wider capitalize text-[#147273]">{type}</p>
+            <p className="font-semibold">{title}</p>
+        </div>
+    </header>
+);
+
+const AssetPage: React.FC<{ asset: NonNullable<OfferStackItem['asset']>, offerName: string }> = ({ asset, offerName }) => (
+    <PageLayout>
+        <AssetHeader type={asset.type} title={offerName} />
+        <main className="flex-grow">
+            <h1 className="text-4xl font-black text-[#147273] mb-6 tracking-tight">{asset.name}</h1>
+            <div className="prose prose-lg max-w-none text-gray-800">
                 <MarkdownRenderer content={asset.content} theme="light" />
             </div>
         </main>
-    </div>
+        <footer className="mt-12 pt-4 border-t border-gray-200 text-xs text-gray-500 text-left">
+             <p className="font-bold">Trillion Business</p>
+             <p>Your AI-Powered Business Plan</p>
+        </footer>
+    </PageLayout>
 );
 
 const ValueStackAssetsPdf: React.FC<{ offer: GeneratedOffer }> = ({ offer }) => {
     return (
-        <div className="p-12 bg-white font-sans text-gray-800" style={{ width: '800px' }}>
-            <header className="text-center mb-12 pb-6 border-b-4 border-gray-300">
-                <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Complete Asset Library for</p>
-                <Title>"{offer.name}"</Title>
-                <Subtitle>All the templates, guides, and scripts you need to deliver on your promise.</Subtitle>
-            </header>
-            <main>
-                {offer.stack.map((item, index) => {
-                    if (item.asset) {
-                        return <AssetSection key={index} asset={item.asset} />;
-                    }
-                    return null;
-                })}
-            </main>
-            <footer className="mt-12 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center break-before-page">
-                <p>Generated by Hormozi AI for your business.</p>
-            </footer>
+        <div style={{ width: '800px' }}>
+            <CoverPage offer={offer} />
+            {offer.stack.map((item, index) => {
+                if (item.asset) {
+                    return <AssetPage key={index} asset={item.asset} offerName={offer.name} />;
+                }
+                return null;
+            })}
         </div>
     );
 };

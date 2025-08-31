@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { GeneratedPlaybook, OfferStackItem, GeneratedOffer, ChatMessage } from '../types';
+import { GeneratedPlaybook, OfferStackItem, GeneratedOffer, PreviewConfig, KpiEntry, WeeklyDebrief } from '../types';
 import Step2Diagnosis from './Step2Diagnosis';
 import MoneyModelAnalysis from './MoneyModelAnalysis';
 import MoneyModelMechanisms from './MoneyModelMechanisms';
@@ -11,21 +12,28 @@ import MoneyModelFunnel from './MoneyModelFunnel';
 import OperationsPlan from './OperationsPlan';
 import SalesFunnel from './SalesFunnel';
 import KpiDashboard from './KpiDashboard';
-import PlaybookChat from './PlaybookChat';
+import SalesSystem from './SalesSystem';
+import PurchasePlan from './PurchasePlan';
 
 interface FullPlaybookProps {
     playbook: GeneratedPlaybook;
     onDownloadAsset: (item: OfferStackItem) => void;
     onPreviewAsset: (item: OfferStackItem) => void;
+    onPreviewPdf: (config: PreviewConfig) => void;
     isAnyPdfGenerating: boolean;
     generatingAsset: OfferStackItem | null;
     onDownloadAllAssets: (offer: GeneratedOffer) => void;
     generatingAssetBundleFor: string | null;
-    chatHistory: ChatMessage[];
-    isChatLoading: boolean;
-    onSendMessage: (message: string) => void;
     pdfProgress: number;
     isStatic?: boolean;
+    onDownloadZip: () => void;
+    isZipping: boolean;
+    zipProgress: number;
+    kpiEntries: KpiEntry[];
+    weeklyDebriefs: WeeklyDebrief[];
+    onSaveKpiEntry: (entry: KpiEntry) => void;
+    onGenerateDebrief: () => void;
+    isGeneratingDebrief: boolean;
 }
 
 interface PlaybookStepProps {
@@ -41,18 +49,19 @@ interface PlaybookStepProps {
 const PlaybookStep: React.FC<PlaybookStepProps> = ({ number, title, subtitle, children, isOpen, onToggle, isStatic }) => {
     const headerContent = (
         <div className="relative pl-12 md:pl-16">
-             <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-yellow-400 text-gray-900 font-black text-2xl rounded-full">
+             <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 text-gray-900 font-black text-2xl rounded-full" style={{backgroundColor: 'var(--accent-color)'}}>
                 {number}
             </div>
             <div className="pl-4 flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">{title}</h2>
-                    <p className="text-gray-400 mb-2">{subtitle}</p>
+                    <h2 className="text-2xl md:text-3xl font-black tracking-tight" style={{color: 'var(--text-dark)'}}>{title}</h2>
+                    <p className="mb-2" style={{color: 'var(--text-light)'}}>{subtitle}</p>
                 </div>
                 {!isStatic && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`playbook-step-toggle-icon h-8 w-8 text-yellow-300 transform transition-transform flex-shrink-0 ml-4 ${isOpen ? 'rotate-180' : ''}`}
+                      className={`playbook-step-toggle-icon h-8 w-8 transform transition-transform flex-shrink-0 ml-4 ${isOpen ? 'rotate-180' : ''}`}
+                      style={{color: 'var(--primary-color)'}}
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -66,8 +75,10 @@ const PlaybookStep: React.FC<PlaybookStepProps> = ({ number, title, subtitle, ch
 
     return (
         <section className="playbook-step">
-            {isStatic ? headerContent : <button onClick={onToggle} className="w-full text-left">{headerContent}</button>}
-            <div className={`transition-all duration-500 ease-in-out overflow-hidden playbook-step-content ${isExpanded ? 'max-h-full opacity-100 mt-8' : 'max-h-0 opacity-0'}`}>
+            <button onClick={onToggle} className="w-full text-left cursor-pointer" disabled={isStatic}>
+                {headerContent}
+            </button>
+            <div className={`transition-all duration-500 ease-in-out overflow-hidden playbook-step-content ${isExpanded ? 'max-h-[20000px] opacity-100 mt-8' : 'max-h-0 opacity-0'}`}>
                 {children}
             </div>
         </section>
@@ -79,17 +90,23 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
     playbook, 
     onDownloadAsset, 
     onPreviewAsset,
+    onPreviewPdf,
     isAnyPdfGenerating,
     generatingAsset,
     onDownloadAllAssets,
     generatingAssetBundleFor,
-    chatHistory,
-    isChatLoading,
-    onSendMessage,
     pdfProgress,
     isStatic = false,
+    onDownloadZip,
+    isZipping,
+    zipProgress,
+    kpiEntries,
+    weeklyDebriefs,
+    onSaveKpiEntry,
+    onGenerateDebrief,
+    isGeneratingDebrief,
 }) => {
-  const [openStep, setOpenStep] = useState<number | null>(isStatic ? -1 : 1);
+  const [openStep, setOpenStep] = useState<number | null>(null);
 
   const toggleStep = (stepNumber: number) => {
     if (isStatic) return;
@@ -99,13 +116,20 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
   const allSteps = [
     { 
       number: 1, 
-      title: 'Diagnosis & Scaling Roadmap (The GPS)', 
+      title: 'Diagnosis & Roadmap (The GPS)', 
       subtitle: 'Your current location and the path to your destination.', 
       component: (
         <div className="space-y-8">
           <Step2Diagnosis diagnosis={playbook.diagnosis} />
           <OperationsPlan operationsPlan={playbook.operationsPlan} />
-          <KpiDashboard kpiDashboard={playbook.kpiDashboard} />
+          <KpiDashboard 
+            kpiDashboard={playbook.kpiDashboard}
+            kpiEntries={kpiEntries}
+            weeklyDebriefs={weeklyDebriefs}
+            onSaveKpiEntry={onSaveKpiEntry}
+            onGenerateDebrief={onGenerateDebrief}
+            isGeneratingDebrief={isGeneratingDebrief}
+          />
         </div>
       ) 
     },
@@ -115,8 +139,8 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
       subtitle: 'The irresistible deal that makes people feel stupid saying no.', 
       component: (
         <div className="space-y-8">
-          <Step3Offers offer1={playbook.offer1} offer2={playbook.offer2} onDownloadAsset={onDownloadAsset} onPreviewAsset={onPreviewAsset} isAnyPdfGenerating={isAnyPdfGenerating} generatingAsset={generatingAsset} onDownloadAllAssets={onDownloadAllAssets} generatingAssetBundleFor={generatingAssetBundleFor} pdfProgress={pdfProgress} isStatic={isStatic} />
-          <DownsellOffer downsell={playbook.downsell} onDownloadAsset={onDownloadAsset} onPreviewAsset={onPreviewAsset} isAnyPdfGenerating={isAnyPdfGenerating} generatingAsset={generatingAsset} pdfProgress={pdfProgress} isStatic={isStatic}/>
+          <Step3Offers offer1={playbook.offer1} offer2={playbook.offer2} onDownloadAsset={onDownloadAsset} onPreviewAsset={onPreviewAsset} isAnyPdfGenerating={isAnyPdfGenerating} generatingAsset={generatingAsset} onDownloadAllAssets={onDownloadAllAssets} generatingAssetBundleFor={generatingAssetBundleFor} pdfProgress={pdfProgress} isStatic={isStatic} onPreviewPdf={onPreviewPdf} />
+          <DownsellOffer downsell={playbook.downsell} onDownloadAsset={onDownloadAsset} onPreviewAsset={onPreviewAsset} isAnyPdfGenerating={isAnyPdfGenerating} generatingAsset={generatingAsset} pdfProgress={pdfProgress} isStatic={isStatic} onPreviewPdf={onPreviewPdf}/>
         </div>
       ) 
     },
@@ -128,6 +152,7 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
         <div className="space-y-8">
           <Step5MarketingModel marketingModel={playbook.marketingModel} isStatic={isStatic} />
           <SalesFunnel salesFunnel={playbook.salesFunnel} />
+          {playbook.salesSystem && <SalesSystem salesSystem={playbook.salesSystem} isStatic={isStatic} />}
         </div>
       ) 
     },
@@ -161,15 +186,12 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
           {step.component}
         </PlaybookStep>
       ))}
-
       {!isStatic && (
-        <div className="pt-8">
-            <PlaybookChat 
-                history={chatHistory}
-                isLoading={isChatLoading}
-                onSendMessage={onSendMessage}
-            />
-        </div>
+          <PurchasePlan 
+            onDownloadZip={onDownloadZip}
+            isZipping={isZipping}
+            zipProgress={zipProgress}
+          />
       )}
     </div>
   );

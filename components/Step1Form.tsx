@@ -35,6 +35,7 @@ const businessCategories = [
     "Service Business",
     "Agency / Consulting",
     "SaaS / Digital Product",
+    "App",
     "E-commerce",
 ];
 
@@ -51,7 +52,7 @@ const InputField: React.FC<{
     isAutofilling?: boolean
 }> = ({ id, label, value, onChange, placeholder, type = "text", required = true, onAutofill, isAutofilling }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+        <label htmlFor={id} className="block text-sm font-medium mb-1" style={{color: 'var(--text-light)'}}>{label}</label>
         <div className="relative">
             <input 
                 type={type}
@@ -60,7 +61,9 @@ const InputField: React.FC<{
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-gray-200 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition ${onAutofill ? 'pr-10' : ''}`}
+                className={`w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition ${onAutofill ? 'pr-10' : ''}`}
+                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 required={required}
             />
             {onAutofill && (
@@ -68,7 +71,8 @@ const InputField: React.FC<{
                     type="button"
                     onClick={onAutofill}
                     disabled={isAutofilling}
-                    className="absolute inset-y-0 right-0 flex items-center px-3 text-yellow-400 hover:text-yellow-300 disabled:opacity-50 disabled:cursor-wait"
+                    className="absolute inset-y-0 right-0 flex items-center px-3 hover:text-yellow-300 disabled:opacity-50 disabled:cursor-wait"
+                    style={{color: 'var(--primary-color)'}}
                     aria-label={`Get AI suggestion for ${label}`}
                     title={`Get AI suggestion for ${label}`}
                 >
@@ -91,14 +95,16 @@ const InputField: React.FC<{
 
 const SelectField: React.FC<{ id: string, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, children: React.ReactNode }> = ({ id, label, value, onChange, children }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+        <label htmlFor={id} className="block text-sm font-medium mb-1" style={{color: 'var(--text-light)'}}>{label}</label>
         <select
             id={id}
             name={id}
             value={value}
             onChange={onChange}
             required
-            className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-gray-200 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+            className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
+            // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+            style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
         >
             {children}
         </select>
@@ -107,10 +113,10 @@ const SelectField: React.FC<{ id: string, label: string, value: string, onChange
 
 const RadioGroupField: React.FC<{ id: string, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, options: { label: string, value: string }[] }> = ({ id, label, value, onChange, options }) => (
     <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>
+        <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-light)'}}>{label}</label>
         <div className="flex items-center space-x-6">
             {options.map(option => (
-                <label key={option.value} className="flex items-center space-x-2 text-gray-200 cursor-pointer">
+                <label key={option.value} className="flex items-center space-x-2 cursor-pointer" style={{color: 'var(--text-dark)'}}>
                     <input
                         type="radio"
                         name={id}
@@ -118,7 +124,9 @@ const RadioGroupField: React.FC<{ id: string, label: string, value: string, onCh
                         checked={value === option.value}
                         onChange={onChange}
                         required
-                        className="h-4 w-4 text-yellow-400 bg-gray-800 border-gray-600 focus:ring-yellow-400 focus:ring-offset-gray-900"
+                        className="h-4 w-4 bg-gray-100 border-gray-300 focus:ring-offset-gray-50"
+                        // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                        style={{color: 'var(--primary-color)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                     />
                     <span>{option.label}</span>
                 </label>
@@ -128,7 +136,7 @@ const RadioGroupField: React.FC<{ id: string, label: string, value: string, onCh
 );
 
 const FormSectionHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <h3 className="text-lg font-bold text-yellow-400 border-b border-gray-600 pb-2 mt-8 mb-6">{children}</h3>
+    <h3 className="text-lg font-bold border-b pb-2 mt-8 mb-6" style={{color: 'var(--primary-color)', borderColor: 'var(--border-color)'}}>{children}</h3>
 );
 
 const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
@@ -251,20 +259,23 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
   return (
     <Card>
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white">Start Your Plan.</h2>
-        <p className="text-gray-400 mt-2">{subheaderText}</p>
+        <h2 className="text-2xl font-bold" style={{color: 'var(--text-dark)'}}>Start Your Plan.</h2>
+        <p className="mt-2" style={{color: 'var(--text-light)'}}>{subheaderText}</p>
         <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2">
             <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-gray-200 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition text-sm"
+                className="bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm focus:ring-2"
+                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
             >
                 {businessCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
             <button
                 type="button"
                 onClick={handleAutofill}
-                className="px-4 py-2 bg-gray-600 text-yellow-300 font-semibold rounded-md hover:bg-gray-500 transition-colors text-sm"
+                className="px-4 py-2 bg-gray-200 font-semibold rounded-md hover:bg-gray-300 transition-colors text-sm"
+                style={{color: 'var(--primary-color)', backgroundColor: 'rgba(20, 114, 115, 0.1)'}}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 3a1 1 0 011 1v1.334l1.322-1.323a1 1 0 111.414 1.414l-1.403 1.404A5.001 5.001 0 0115 10a5 5 0 01-5 5v2a1 1 0 11-2 0v-2a5 5 0 01-5-5c0-1.606.767-3.033 1.95-3.95l-1.405-1.404a1 1 0 111.414-1.414L8 5.334V4a1 1 0 011-1zm-4.322 7.323a3 3 0 106.644 0 3 3 0 00-6.644 0z" />
@@ -275,37 +286,41 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
         </div>
       </div>
       
-      <div className="relative p-6 bg-gray-900/50 rounded-lg border-2 border-dashed border-yellow-400 mb-8">
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 bg-gray-800 text-yellow-400 font-bold text-sm">FAST TRACK</div>
-        <h3 className="text-xl font-bold text-white text-center">Autofill with AI</h3>
-        <p className="text-gray-400 text-center mt-2 mb-4 text-sm">
+      <div className="relative p-6 bg-gray-50 rounded-lg border-2 border-dashed mb-8" style={{borderColor: 'var(--primary-color)', backgroundColor: 'var(--bg-muted)'}}>
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 text-sm font-bold" style={{backgroundColor: 'var(--bg-muted)', color: 'var(--primary-color)'}}>FAST TRACK</div>
+        <h3 className="text-xl font-bold text-center" style={{color: 'var(--text-dark)'}}>Autofill with AI</h3>
+        <p className="text-center mt-2 mb-4 text-sm" style={{color: 'var(--text-light)'}}>
           Provide a URL or a brief description, and our AI will attempt to fill out the form for you.
         </p>
         <div className="space-y-4">
             <div>
-                <label htmlFor="autofillUrl" className="block text-sm font-medium text-gray-300 mb-1">Business Website or LinkedIn URL (Optional)</label>
+                <label htmlFor="autofillUrl" className="block text-sm font-medium mb-1" style={{color: 'var(--text-light)'}}>Business Website or LinkedIn URL (Optional)</label>
                 <input
                     type="text"
                     id="autofillUrl"
                     value={autofillUrl}
                     onChange={(e) => setAutofillUrl(e.target.value)}
                     placeholder="https://example.com"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-gray-200 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+                    className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
+                    // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                    style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 />
             </div>
             <div>
-                <label htmlFor="autofillDescription" className="block text-sm font-medium text-gray-300 mb-1">Briefly describe your business or idea</label>
+                <label htmlFor="autofillDescription" className="block text-sm font-medium mb-1" style={{color: 'var(--text-light)'}}>Briefly describe your business or idea</label>
                 <textarea
                     id="autofillDescription"
                     rows={3}
                     value={autofillDescription}
                     onChange={(e) => setAutofillDescription(e.target.value)}
                     placeholder="e.g., 'We're a new SaaS company building a project management tool for small agencies. We're bootstrapping and want to find our first 10 customers.'"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-gray-200 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition"
+                    className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
+                    // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                    style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 />
             </div>
             {autofillError && (
-                <div className="bg-red-900/50 border border-red-700 text-red-200 p-3 rounded-lg text-center text-sm">
+                <div className="bg-red-100 border border-red-300 text-red-800 p-3 rounded-lg text-center text-sm">
                     {autofillError}
                 </div>
             )}
@@ -313,7 +328,8 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
                 type="button"
                 onClick={handleAutofillWithAI}
                 disabled={isAutofilling || !autofillDescription.trim()}
-                className="w-full flex items-center justify-center px-4 py-3 bg-yellow-500 text-gray-900 font-bold rounded-md hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-wait"
+                className="w-full flex items-center justify-center px-4 py-3 text-white font-bold rounded-md transition-colors disabled:opacity-50 disabled:cursor-wait"
+                style={{backgroundColor: 'var(--primary-color)'}}
             >
                 {isAutofilling ? (
                     <>
@@ -409,7 +425,9 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
         <div className="pt-4">
             <button 
                 type="submit" 
-                className="w-full bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-yellow-400"
+                className="w-full text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
+                style={{backgroundColor: 'var(--primary-color)', '--tw-ring-color': 'var(--primary-color)', '--tw-ring-offset-color': 'var(--bg-light)'} as React.CSSProperties}
             >
                 Make My Plan!
             </button>

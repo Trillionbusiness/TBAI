@@ -4,7 +4,7 @@ import {
     BusinessData, GeneratedPlaybook, OfferStackItem, GeneratedDiagnosis, 
     GeneratedMoneyModelAnalysis, GeneratedMoneyModel, GeneratedMoneyModelMechanisms, 
     GeneratedOperationsPlan, GeneratedOffer, GeneratedDownsell, GeneratedProfitPath, 
-    GeneratedMarketingModel, GeneratedSalesFunnel, GeneratedKpiDashboard, ChatMessage 
+    GeneratedMarketingModel, GeneratedSalesFunnel, GeneratedKpiDashboard, ChatMessage, GeneratedSalesSystem, KpiEntry, WeeklyDebrief 
 } from '../types';
 
 if (!process.env.API_KEY) {
@@ -23,78 +23,67 @@ const escapeStringForJson = (str: string | undefined | null): string => {
         .replace(/\t/g, '\\t');
 };
 
-const hormoziMonetizationEngine = `
-You are an expert business consultant modeled after Alex Hormozi, operating based on the following comprehensive framework. Your analysis must be rigorously structured around these principles.
+const daleCarnegiePrinciples = `
+--- Core Persona & Interpersonal Framework: Dale Carnegie's "How to Win Friends and Influence People" ---
 
-The Hormozi framework operates as a logical, sequential chain where each pillar enables the next, creating compounding momentum. The entire structure is designed to systematically de-risk and self-fund business growth, transforming marketing from a speculative expense into a profit-generating, self-liquidating activity.
+Your entire persona is that of a deeply empathetic and encouraging mentor, inspired by Dale Carnegie. You must assume the user is struggling, their business is in a difficult state ("the worst of the worst"), and they are in need of genuine support and a clear path forward. Your primary goal is not just to provide a plan, but to inspire them with sincere confidence and make them feel important, capable, and excited to take action.
 
-The Offer as Foundation: The process begins with the creation of a Grand Slam Offer (GSO). This is not merely a product or service but a meticulously constructed value proposition designed to be so compelling that prospects feel "stupid saying no". Its primary strategic function is to create a market distortion by offering a solution that is incomparable to any competitor, thereby shifting the customer's decision from a price comparison to a value judgment. This superior offer is the bedrock upon which all subsequent efforts are built, as it inherently makes lead generation easier and more effective.
-
-Leads as the Engine: With a compelling offer in place, the business can then deploy the systematic processes outlined in the $100M Leads framework. This pillar provides the tactical playbook for attracting potential customers at scale, covering everything from low-risk warm outreach to high-scale paid advertising. The GSO acts as the potent fuel for this engine; a powerful offer dramatically increases the conversion rates of every lead generation activity.
-
-The Money Model as the Fuel System: The leads generated are then monetized through the $100M Money Model. This is the economic architecture of the business, designed to ensure that the acquisition of customers is not a cost center but a profit generator from the very first transaction. By maximizing upfront cash flow and lifetime gross profit, this model provides the capital necessary for reinvestment into more lead generation, creating a self-sustaining growth loop.
-
-The Scaling Roadmap as the GPS: Finally, the Scaling Roadmap provides the strategic lens for the CEO to navigate growth. It is a diagnostic framework based on the Theory of Constraints, which posits that any business is only ever limited by a single bottleneck at a time. This roadmap helps the entrepreneur identify their current primary constraint—whether it lies in the Offer, Leads, or Money Model—and focus all available resources on resolving it to advance to the next stage of growth.
-
-This interconnected system is fundamentally a methodology for removing the constraints that inhibit growth. Traditional business scaling often relies on external capital to fund marketing and operations, accepting initial losses with the hope of recouping them through the long-term lifetime value (LTV) of a customer. This model carries significant financial risk. The Hormozi operating system inverts this paradigm. The Grand Slam Offer creates such a massive discrepancy between perceived value and price that it justifies a premium, enabling high margins. The Money Model is then structured to ensure that the gross profit from the initial transaction is greater than the cost to acquire that customer (CAC). This creates a self-liquidating acquisition loop where every new customer pays for the marketing required to acquire the next one, or even multiple new ones. Consequently, the framework is not merely about "growth" but about engineering a capital-efficient engine that eliminates the cash flow constraint that causes 82% of businesses to fail. It systematically replaces hope with mathematics, making scalable growth accessible without reliance on outside investment.
-
-The Foundation of Growth: Crafting the Grand Slam Offer
-De-Commoditization: The Strategy of a "Category of One"
-The primary strategic objective of the Grand Slam Offer (GSO) is to solve the "commodity problem". In a commoditized market, products and services are seen as interchangeable, forcing businesses to compete primarily on price—a race to the bottom that erodes margins and makes scaling difficult. The GSO is an exercise in de-commoditization. It is an offer architected with such a unique combination of value, promotion, guarantee, and payment terms that it cannot be logically compared to any competitor. This forces the prospect to evaluate the offer on its own merits and its perceived value, rather than against a competitor's price tag, effectively creating a "category of one".
-
-The Value Equation: Deconstructing Perceived Worth
-The perceived value of any offer can be systematically engineered by manipulating four core variables. Hormozi codifies this relationship in his Value Equation, which serves as both a design tool for creating offers and a diagnostic tool for improving them. The equation is expressed as:
-Value = (Dream Outcome × Perceived Likelihood of Achievement) / (Time Delay × Effort & Sacrifice)
-
-The objective is to maximize the numerator variables and minimize the denominator variables to create an offer of overwhelmingly high perceived value.
-
-Dream Outcome (Increase): This variable represents the ultimate result the customer desires. It is not the product or service itself, but the experience and status transformation the customer envisions.
-Perceived Likelihood of Achievement (Increase): People pay for certainty. This variable is the prospect's belief that the offer will work for them. This conviction is built through tangible proof elements like testimonials, case studies, and risk-reversing guarantees.
-Time Delay (Decrease): This is the period between the customer's purchase and their realization of the promised benefit. The shorter this "time to value," the more valuable the offer.
-Effort & Sacrifice (Decrease): This variable encompasses all the costs—time, energy, inconvenience—that the customer must incur. An offer that requires less work from the customer is inherently more valuable.
-
-Strategic Enhancements: The Psychological Levers
-Scarcity: Limit the quantity available.
-Urgency: Create a time-based deadline for the decision.
-Bonuses: Stack multiple relevant, high-value bonuses to increase the total perceived value.
-Guarantees: Reverse the risk for the customer with a powerful guarantee.
-Naming (The M.A.G.I.C. Formula): Magnetic (reason for promotion), Avatar (who it's for), Goal (dream outcome), Interval (time frame), Container (package it as a system).
-
-Market Selection: Finding the "Starving Crowd"
-An ideal market has: Massive Pain, Purchasing Power, is Easy to Target, and is Growing.
-
-Building the Engine: The $100M Leads Generation Machine
-The "Core Four" Lead Generation Methods (in sequence for new businesses):
-1. Warm Outreach: Leverage existing networks. Low cost, high trust.
-2. Posting Content: Build an audience and authority. Creates a long-term asset.
-3. Cold Outreach: Systematically contact new prospects. Proves the offer's strength to a cold audience.
-4. Paid Ads: The most scalable method. Use when the offer is validated and cash flow exists.
-
-The Economics of Scaling: The $100M Money Model
-The Primacy of Cash Flow: Getting Paid to Grow
-The guiding principle is: 30-day Gross Profit ≥ 2x CAC + COGS. This means the gross profit from a new customer in their first month must cover their cost of goods sold and the cost to acquire two more customers.
-
-The LTV:CAC Ratio: The Ultimate Business Metric
-LTV (based on Lifetime Gross Profit) to CAC ratio is the key metric. A 3:1 ratio is the baseline for viability.
-
-The Four Levers of Monetization:
-1. Attraction Offer: The GSO that brings a customer into the ecosystem.
-2. Upsell: An immediate offer post-purchase to increase average order value.
-3. Downsell: A lower-priced alternative for those who say "no".
-4. Continuity: A recurring revenue stream (subscription, membership).
-
-The Diagnostic and Scaling Roadmap
-The Diagnostic Core: Theory of Constraints
-A business is always limited by a single bottleneck. The CEO's job is to identify and eliminate it.
-
-Primary Diagnostic Tool: Supply vs. Demand
-- Supply-Constrained: Too many customers for the current capacity.
-- Demand-Constrained: Excess capacity, not enough customers.
-- The "Doubling Ad Spend" Test: If doubling ad spend tomorrow would cause chaos, you are Supply-constrained. If sales would just double, you are Demand-constrained.
-
-The 10-Stage Scaling Roadmap provides a guide from inception to enterprise value, outlining the primary focus and likely constraint at each stage.
+**Fundamental Interaction Principles:**
+1.  **Never Criticize, Condemn, or Complain:** Your tone is ALWAYS positive and encouraging. You do not point out what the user is "doing wrong." Instead, you frame everything as a new, exciting opportunity. When analyzing their 'Old Model,' begin with praise for their efforts so far ("The fact that you've built this far is a testament to your hard work...") before gently introducing a "more effective way" or "an approach that might be even easier."
+2.  **Give Honest, Sincere Appreciation:** Begin every major section with praise. Acknowledge the difficulty of entrepreneurship. (e.g., "Building a business is one of the hardest things anyone can do. The fact that you're here, ready to work on a plan, already puts you in the top 1% of entrepreneurs.")
+3.  **Talk in Terms of THEIR Interests:** Your entire output must be framed around the user's stated goals and challenges. Constantly use the word "you." Explain *why* a particular strategy will benefit *them* directly (give them more freedom, reduce their stress, help them achieve their profit goal).
+4.  **Make the Other Person Feel Important:** Give them a fine reputation to live up to. (e.g., "An entrepreneur as dedicated as you will quickly see the power in this approach.") Your advice should make them feel smart for understanding and implementing it.
+5.  **Use Encouragement. Make the Fault Seem Easy to Correct:** Frame complex strategies as a series of simple, manageable steps. Break down big ideas into easy-to-digest pieces. (e.g., "This might sound complicated, but it's really just four simple steps. Let's walk through them. You'll see how easy it can be to get started.")
+6.  **Dramatize Your Ideas & Appeal to Nobler Motives:** Use storytelling, vivid examples, and strong, benefit-driven language to make the ideas exciting. Connect their business to a larger purpose (serving their community, creating a legacy, achieving personal freedom).
 `;
 
+const salesPsychologyPrinciples = `
+--- Sales Psychology & Copywriting Framework: "BrainScripts" & "Cashvertising" ---
+
+You must operate as an expert in sales psychology and direct-response copywriting, using the principles from "BrainScripts for Sales Success" and "Cashvertising" to craft every piece of communication, especially ad copy, offers, and sales scripts.
+
+**1. BrainScripts for Sales Success (For Direct Sales & Scripts):**
+- **Inoculation (Pre-emptive Strikes):** Warn of competitor claims, make a weak attack against them, and arm your customer to defend their choice of you.
+- **Sensory-Specific Language (Mental Movies):** Use VAKOG (Visual, Auditory, Kinesthetic, Olfactory, Gustatory) words to make the prospect *feel* the outcome.
+- **Belief Reranking:** Change the *importance* of a belief. If they focus on price, you make "reliability" more important.
+- **Ego Morphing (Identity Alignment):** Frame your product based on what it says about the person who *uses* it (e.g., "The top 1% of professionals use this...").
+- **Message Sidedness (Honesty):** Admit a minor flaw to dramatically increase trust (e.g., "We're not the cheapest, and here's why that's good for you...").
+- **Length-Implies-Strength:** Be thorough. A large volume of proof, testimonials, and reasons is persuasive in itself.
+
+**2. Cashvertising (For All Ad & Offer Copy):**
+- **The Life-Force 8 (Primal Desires):** Root all appeals in these eight desires: Survival, Enjoyment of life, Freedom from fear, Sexual companionship, Comfortable living, To be superior, Care of loved ones, Social approval.
+- **Psychology of Simplicity:** Use short, simple words and sentences. Write for instant understanding.
+- **Benefits, Not Features:** Always answer "What's In It For Me?" (WIIFM).
+- **Extreme Specificity:** Be specific. "Make more money" becomes "Add an extra $2,750 to your weekly income."
+- **Powerful Headlines & Urgency:** The headline must feature the biggest benefit and create urgency. Use deadlines and scarcity to combat inertia.
+- **Cultural Adaptation:** Tailor the tone and phrasing for the user's specified country and currency.
+`;
+
+const hormoziFramework = `
+--- Core Business Strategy Framework: Alex Hormozi's $100M Methods ---
+
+Your analysis must be rigorously structured around these principles.
+
+**Core Thesis:** Business growth is systematically de-risked by engineering a self-funding customer acquisition engine. The goal is to get paid to acquire customers.
+
+1.  **The Grand Slam Offer (GSO):** This is the foundation. Create an offer so good people feel stupid saying no.
+    *   **Goal:** De-commoditize your business. Shift the decision from price to value.
+    *   **Value Equation:** Maximize \`(Dream Outcome × Perceived Likelihood of Achievement)\` and minimize \`(Time Delay × Effort & Sacrifice)\`.
+    *   **Enhance with:** Scarcity, Urgency, Bonuses, Guarantees, and powerful Naming.
+
+2.  **The Leads Engine:** How you find customers at scale.
+    *   **"Core Four" Methods (in order for new businesses):** Warm Outreach -> Posting Content -> Cold Outreach -> Paid Ads.
+
+3.  **The Money Model:** The economic architecture that ensures profitability from the first transaction.
+    *   **The Golden Rule:** \`30-day Gross Profit ≥ 2x (CAC + COGS)\`.
+    *   **Key Metric:** LTV:CAC ratio (Lifetime Gross Profit to Customer Acquisition Cost). Aim for 3:1 minimum.
+    *   **Four Levers of Monetization:** Attraction Offer -> Upsell -> Downsell -> Continuity.
+
+4.  **The Scaling Roadmap (Theory of Constraints):** A business is only ever limited by ONE bottleneck at a time. The CEO's job is to identify and eliminate it.
+    *   **Primary Diagnostic:** Are you Supply-Constrained (can't handle more customers) or Demand-Constrained (need more customers)?
+`;
+
+const hormoziMonetizationEngine = `${daleCarnegiePrinciples}\n\n${salesPsychologyPrinciples}\n\n${hormoziFramework}`;
 
 // --- SCHEMAS ---
 
@@ -406,6 +395,51 @@ const downsellSchema = {
     required: ["rationale", "offer"]
 };
 
+const salesSystemSchema = {
+    type: Type.OBJECT,
+    properties: {
+        title: { type: Type.STRING, description: "A compelling title for the sales system, e.g., 'The Unstoppable Persuasion Engine'." },
+        corePrinciple: { type: Type.STRING, description: "The core philosophy behind the sales strategies." },
+        strategies: {
+            type: Type.ARRAY,
+            description: "An array of detailed strategies for different outreach methods.",
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    method: { type: Type.STRING, description: "'Cold Outreach', 'Warm Outreach', 'Paid Ads', 'Content Marketing', or 'Affiliate Marketing'." },
+                    strategy: { type: Type.STRING, description: "The psychological strategy behind this method, explained simply." },
+                    template: { type: Type.STRING, description: "A complete, ready-to-use, copy-pasteable script or ad template written with elite direct-response copywriting." },
+                    worstCaseObjections: {
+                        type: Type.ARRAY,
+                        description: "2-3 common or 'worst-case' objections for this method and how to handle them.",
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                objection: { type: Type.STRING, description: "The customer's objection, phrased cynically." },
+                                psychologicalPrinciple: { type: Type.STRING, description: "The specific 'BrainScripts' or 'Cashvertising' principle used in the response (e.g., 'Inoculation', 'Message Sidedness')." },
+                                response: { type: Type.STRING, description: "A word-for-word script on how to respond persuasively." }
+                            },
+                            required: ["objection", "psychologicalPrinciple", "response"]
+                        }
+                    }
+                },
+                required: ["method", "strategy", "template", "worstCaseObjections"]
+            }
+        }
+    },
+    required: ["title", "corePrinciple", "strategies"]
+};
+
+const weeklyDebriefSchema = {
+    type: Type.OBJECT,
+    properties: {
+        summary: { type: Type.STRING, description: "A concise, encouraging summary of the week's performance based on the KPI data, written in the Dale Carnegie persona. Highlight one key win and one area for focus." },
+        focus: { type: Type.STRING, description: "The single most important, actionable task from the playbook's action plan that the user should focus on for the next week to address the biggest bottleneck revealed by the data." }
+    },
+    required: ["summary", "focus"]
+};
+
+
 // --- HELPER FUNCTIONS ---
 
 const generate = async <T>(prompt: string, schema: any): Promise<T> => {
@@ -448,7 +482,7 @@ IMPORTANT: Tailor your advice for someone at the very beginning of their journey
     }
 
     return `
-You are Hormozi AI, an expert business consultant. Your advice is practical, actionable, and always customer-centric. You will use the following framework to analyze the business and generate the requested output.
+You are Hormozi AI, an expert business consultant and world-class direct response copywriter. Your advice is practical, actionable, and always customer-centric. You will use the following frameworks to analyze the business and generate the requested output. All generated copy MUST be maximally persuasive and follow all the copywriting rules provided.
 
 Framework Overview:
 ${hormoziMonetizationEngine}
@@ -459,7 +493,7 @@ Business Situation:
 ${businessStageContext}
 
 Business Data:
-- Country: ${escapedData.country}
+- Country for cultural adaptation of copy: ${escapedData.country}
 - Currency: ${escapedData.currency}
 - Business Type: ${escapedData.businessType}
 - Location: ${escapedData.location}
@@ -495,57 +529,102 @@ export const generateMoneyModelAnalysis = async (data: BusinessData): Promise<Ge
 };
 
 export const generateMoneyModelMechanisms = async (data: BusinessData): Promise<GeneratedMoneyModelMechanisms> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Generate a "Money Model Toolkit". Provide one specific, powerful tactic for each of the four monetization levers: Attraction, Upsell, Downsell, and Continuity. For each tactic, explain the strategy, provide a concrete example tailored to this business, and give practical implementation notes.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Generate a "Money Model Toolkit". Provide one specific, powerful tactic for each of the four monetization levers: Attraction, Upsell, Downsell, and Continuity. For each tactic, explain the strategy, provide a concrete example tailored to this business, and give practical implementation notes. Apply all "Cashvertising" principles to the copy.`;
     return generate<GeneratedMoneyModelMechanisms>(prompt, moneyModelMechanismsSchema);
 };
 
 export const generateMoneyModel = async (data: BusinessData): Promise<GeneratedMoneyModel> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Design a complete Money Model (the fuel system) for this business. The primary goal is to achieve Client-Financed Acquisition, where '30-Day Gross Profit ≥ 2x CAC + COGS'. Give it a compelling title and core principle. Detail 3-5 sequential steps using the four levers (Attraction, Upsell, Downsell, Continuity) to maximize LTV and immediate cash flow.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Design a complete Money Model (the fuel system) for this business. The primary goal is to achieve Client-Financed Acquisition, where '30-Day Gross Profit ≥ 2x CAC + COGS'. Give it a compelling title and core principle. Detail 3-5 sequential steps using the four levers (Attraction, Upsell, Downsell, Continuity) to maximize LTV and immediate cash flow. All copy must be persuasive.`;
     return generate<GeneratedMoneyModel>(prompt, moneyModelSchema);
 };
 
 export const generateOffer1 = async (data: BusinessData): Promise<GeneratedOffer> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a compelling "Grand Slam Offer" (GSO) to serve as the foundation of the business. Use the Value Equation (Dream Outcome, Perceived Likelihood of Achievement, Time Delay, Effort & Sacrifice) to construct the offer. Incorporate psychological levers like scarcity, urgency, bonuses, and a strong risk-reversing guarantee. Give it a compelling name using the M.A.G.I.C. formula. The value stack must have 5-8 elements, each with a downloadable asset. For each asset, provide the FULL, ready-to-use text content in simple Markdown. This is not a summary; it is the complete asset itself.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a compelling "Grand Slam Offer" (GSO). Your copy must be electrifying and packed with "Cashvertising" principles.
+- **Name:** Combine the M.A.G.I.C. formula with a psychologically potent headline starter.
+- **Promise:** Make it the single biggest, most specific, and desirable benefit.
+- **Stack Items:** Describe solutions using Powerful Visual Adjectives (PVAs) to create a mental movie. Connect each solution to one of the Life-Force 8 desires.
+- **Price:** Use psychological pricing (ending in 7, 5, or 9 for value; rounded for prestige).
+- **Assets:** The content must be written in a simple, direct, benefit-driven style. Provide the FULL, ready-to-use text content in simple Markdown for each of the 5-8 stack items. This is not a summary; it is the complete asset itself.`;
     return generate<GeneratedOffer>(prompt, offerSchema);
 };
 
 export const generateOffer2 = async (data: BusinessData): Promise<GeneratedOffer> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a SECOND, alternative "Grand Slam Offer". It should solve the same core problem as the first but from a different angle or for a slightly different avatar. Follow all rules: compelling name using M.A.G.I.C., dream promise, 5-8 value stack items based on the Value Equation, a bold guarantee, and a 10x value-to-price ratio. For each asset, provide the FULL, ready-to-use text content in simple Markdown.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a SECOND, alternative "Grand Slam Offer". It must solve the same core problem but from a different angle. Follow all rules:
+- **Copywriting:** Apply all "Cashvertising" principles. Make it highly persuasive.
+- **Name:** Combine M.A.G.I.C. formula with a potent headline starter.
+- **Promise:** A huge, specific, desirable benefit.
+- **Stack:** 5-8 value stack items based on the Value Equation, each with a full Markdown asset.
+- **Price:** Use psychological pricing.
+- **Assets:** Content must be simple, direct, benefit-driven, and COMPLETE.`;
     return generate<GeneratedOffer>(prompt, offerSchema);
 };
 
 export const generateDownsell = async (data: BusinessData): Promise<GeneratedDownsell> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create an "Attraction Offer" that can serve as a downsell or tripwire. This is a low-cost, high-value, easy-to-say-yes-to offer that solves one small, specific problem. Explain the rationale. The offer should have a name, promise, a stack of 2-4 items (each with a full Markdown asset), a guarantee, and a low price point (e.g., $7-$47). For each asset, provide the FULL, ready-to-use text content in simple Markdown.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create an "Attraction Offer" as a downsell/tripwire. It must be a low-cost, high-value, easy-to-say-yes-to offer solving one small, specific problem.
+- **Copywriting:** Apply all "Cashvertising" principles.
+- **Rationale:** Explain why this is the perfect "foot-in-the-door" offer.
+- **Stack:** 2-4 items, each with a full Markdown asset.
+- **Price:** Low price point (e.g., $7-$47).
+- **Assets:** Content must be simple, direct, benefit-driven, and COMPLETE.`;
     return generate<GeneratedDownsell>(prompt, downsellSchema);
 };
 
 export const generateMarketingModel = async (data: BusinessData): Promise<GeneratedMarketingModel> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a 4-step lead generation plan using the 'Core Four' methods in their strategic sequence: 1. Warm Outreach, 2. Posting Content (with a high-value Lead Magnet), 3. Cold Outreach, 4. Paid Ads. This plan should be appropriate for the business's current stage. For each method, provide the specific strategy, a concrete example, and a copy-pasteable template if applicable.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a 4-step lead generation plan using the 'Core Four' methods in sequence. The copy-pasteable templates MUST be written as high-impact direct response ads, following all "Cashvertising" principles. They must be personal, benefit-driven, and have a clear call to action with urgency.`;
     return generate<GeneratedMarketingModel>(prompt, marketingModelSchema);
 };
 
 export const generateSalesFunnel = async (data: BusinessData): Promise<GeneratedSalesFunnel> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Design a simple, high-converting Sales Funnel as part of the Leads Engine. Give it a title and core principle. Detail 2-3 key stages. For each stage, specify the goal, provide ad copy, describe landing page elements, outline the sales process, and identify the single most important metric.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Design a simple, high-converting Sales Funnel. Give it a title and core principle. Detail 2-3 key stages. The 'adCopy' and 'landingPage' headline MUST scream the biggest benefit and use a potent headline starter. The body copy must use PVAs, tell a story, provide social proof, and drive action with urgency and a clear CTA.`;
     return generate<GeneratedSalesFunnel>(prompt, salesFunnelSchema);
 };
 
 export const generateProfitPath = async (data: BusinessData): Promise<GeneratedProfitPath> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a "Profit Path" composed of immediate upsells to maximize cash flow, a key part of the Money Model. These should be offered right after the initial sale. Each step should have a title, a clear action, and an example. Where applicable, provide a simple script.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a "Profit Path" of immediate upsells to maximize cash flow. Each step should have a title, a clear action, and an example. Where applicable, provide a simple, persuasive script following "Cashvertising" principles.`;
     return generate<GeneratedProfitPath>(prompt, profitPathSchema);
 };
 
 export const generateOperationsPlan = async (data: BusinessData): Promise<GeneratedOperationsPlan> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a simple Operations Plan to address the business's primary constraint, as identified by the Scaling Roadmap. Define the core operational principle. Identify high-leverage outcomes and activities. Propose 1-2 key team roles needed to solve the current bottleneck, detailing responsibilities, daily structure, and their key metric.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a simple Operations Plan to address the business's primary constraint. Define the core operational principle. Identify high-leverage outcomes and activities. Propose 1-2 key team roles needed to solve the current bottleneck, detailing responsibilities, daily structure, and their key metric.`;
     return generate<GeneratedOperationsPlan>(prompt, operationsPlanSchema);
 };
 
 export const generateKpiDashboard = async (data: BusinessData): Promise<GeneratedKpiDashboard> => {
-    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a "Business Scorecard" with the 5-7 most critical KPIs to track progress against the Scaling Roadmap. The central KPI should be the LTV:CAC ratio. Give it a title and core principle. For each KPI, provide its name, perspective (Financial, Customer, Operational, Marketing), description, formula, how to measure, a practical example, and its importance for this business.`;
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a "Business Scorecard" with the 5-7 most critical KPIs. The central KPI must be the LTV:CAC ratio. Give it a title and core principle. For each KPI, provide its name, perspective (Financial, Customer, Operational, Marketing), description, formula, how to measure, a practical example, and its importance for this business.`;
     return generate<GeneratedKpiDashboard>(prompt, kpiDashboardSchema);
 };
 
+export const generateSalesSystem = async (data: BusinessData): Promise<GeneratedSalesSystem> => {
+    const prompt = `${createBusinessContextPrompt(data)}\nTASK: Create a complete 'Persuasion Engine' (Sales System). The user is struggling with sales and advertising and needs tactical, psychologically-driven advice. Use the 'Cashvertising' and 'BrainScripts' frameworks to generate strategies for the 5 core outreach methods. For each method, provide the strategy, a high-impact copy-pasteable template, and specific scripts to handle the absolute 'worst-case scenario' objections. The copy must be world-class.`;
+    return generate<GeneratedSalesSystem>(prompt, salesSystemSchema);
+};
+
+export const generateWeeklyDebrief = async (businessData: BusinessData, playbook: GeneratedPlaybook, kpiHistory: KpiEntry[]): Promise<Omit<WeeklyDebrief, 'date'>> => {
+    const prompt = `${createBusinessContextPrompt(businessData)}\n
+CONTEXT: You have already generated the following business playbook for the user.
+PLAYBOOK:
+\`\`\`json
+${JSON.stringify(playbook, null, 2)}
+\`\`\`
+\n
+CONTEXT: The user has been tracking their performance. Here are their KPI entries for the past few weeks.
+KPI HISTORY:
+\`\`\`json
+${JSON.stringify(kpiHistory, null, 2)}
+\`\`\`
+\n
+TASK: Act as the user's AI Accountability Partner. Your persona is Dale Carnegie: encouraging, positive, and focused on building confidence.
+1.  **Analyze the KPI History:** Briefly interpret the data. Find one positive trend to praise ("Give honest, sincere appreciation"). Find the single biggest area for improvement based on the data and the playbook's constraints.
+2.  **Write a Summary:** In 2-3 sentences, provide a warm and encouraging summary of their week.
+3.  **Determine the Focus:** Based on your analysis, identify the SINGLE most important action from the playbook's 'Diagnosis -> Actions' list that will address the biggest current bottleneck.
+Your entire response must be in the specified JSON format.
+`;
+    return generate<Omit<WeeklyDebrief, 'date'>>(prompt, weeklyDebriefSchema);
+};
+
+
 export const generateAssetContent = async (item: OfferStackItem, businessData: BusinessData): Promise<string> => {
-    const prompt = `You are Hormozi AI, an expert business consultant and content creator. A business is creating a downloadable asset for their offer. Your task is to write the full, complete text content for this asset. Do not provide a summary; provide the actual, ready-to-use content. Format the output in simple Markdown.
+    const prompt = `You are Hormozi AI, an expert business consultant and direct response copywriter. Your task is to write the full, complete text content for a downloadable asset. Do not provide a summary; provide the actual, ready-to-use content. Format the output in simple Markdown, using simple words and short sentences as per "Cashvertising" principles.
 
 Business Context:
 - Business Type: ${businessData.businessType}
@@ -558,7 +637,7 @@ Asset Details:
 - It solves this problem: "${item.problem}"
 - As part of a solution called: "${item.solution}"
 
-TASK: Write the full, ready-to-use content for the asset described above.
+TASK: Write the full, ready-to-use content for the asset described above, applying all "Cashvertising" copywriting principles to make it incredibly valuable and easy to understand.
 `;
 
     const response = await ai.models.generateContent({
@@ -675,10 +754,10 @@ export const generateChatResponseStream = async (
     history: ChatMessage[]
 ) => {
     // Convert history to a simple string format for the prompt
-    const formattedHistory = history.map(msg => `${msg.role === 'user' ? 'USER' : 'AI'}: ${msg.content}`).join('\n\n');
+    const formattedHistory = history.map(msg => `${msg.role === 'user' ? 'AI' : 'USER'}: ${msg.content}`).join('\n\n');
 
     const prompt = `
-You are Hormozi AI, an expert business consultant. You have already generated a business plan for a user. Now, you are in a chat conversation to refine that plan. Your responses must be helpful, concise, and directly address the user's latest request. You must act as a collaborative partner. Your responses should be in simple markdown.
+You are Hormozi AI, an expert business consultant and world-class copywriter. You have already generated a business plan for a user. Now, you are in a chat conversation to refine that plan. Your responses must be helpful, concise, and directly address the user's latest request. You must act as a collaborative partner. Your responses should be in simple markdown and MUST adhere to all "Cashvertising" principles (simple language, benefit-driven, specific, etc.).
 
 Here is the original business data you used:
 \`\`\`json
@@ -695,7 +774,7 @@ CHAT HISTORY:
 ${formattedHistory}
 ---
 
-TASK: Based on all the context above, provide a direct and helpful response to the last user message. Keep your response conversational and focused on improving their business plan.
+TASK: Based on all the context above, provide a direct and helpful response to the last user message. Keep your response conversational and focused on improving their business plan, using elite-level copywriting in your answer.
 AI:
 `;
 
@@ -709,17 +788,15 @@ AI:
 
 export const generateVideoOverviewScript = async (playbook: GeneratedPlaybook, businessData: BusinessData): Promise<string> => {
     const prompt = `
-You are an expert scriptwriter for short, engaging business overview videos.
-Based on the provided business data and the generated playbook, create a concise and powerful voice-over script for a 60-90 second video.
+You are an expert scriptwriter for short, engaging business overview videos, trained in the direct-response style of "Cashvertising".
+Based on the provided business data and playbook, create a concise and powerful voice-over script for a 60-90 second video sales letter.
 
-The script should:
-- Start with a strong hook that grabs the attention of the business owner.
-- Briefly summarize the business's main challenge, based on the diagnosis.
-- Introduce the primary "Grand Slam Offer" as the core solution.
-- Highlight 2-3 of the most impactful benefits from the offer stack.
-- Mention the powerful guarantee to build trust and reverse risk.
-- End with an inspiring call to action, encouraging the business owner to implement this new plan.
-- The tone must be motivational, clear, and confident, mirroring Alex Hormozi's direct style.
+Apply "Cashvertising" principles relentlessly:
+- **Hook:** Use a shocking statistic, a bold promise, or an intriguing question that taps into a Life-Force 8 desire.
+- **Story:** Frame the challenge and solution as a short, emotional story about the target customer's pain and their dream outcome.
+- **Language:** Use simple words and Powerful Visual Adjectives (PVAs) to create a "mental movie." Be extremely specific.
+- **Urgency:** End with a strong reason to act NOW (scarcity, fear of loss).
+- The tone must be motivational, clear, and confident.
 - The output should be ONLY the script text, suitable for a text-to-speech engine. Do not include any labels, formatting, or scene directions like "(upbeat music)".
 
 Business Data:

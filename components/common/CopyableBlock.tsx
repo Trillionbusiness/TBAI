@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 
 interface CopyableBlockProps {
@@ -20,23 +21,24 @@ const CopyableBlock: React.FC<CopyableBlockProps> = ({ content, title, isStatic 
   };
 
   return (
-    <div className="mt-4 bg-gray-900/70 p-4 rounded-lg border border-gray-700">
+    <div className="mt-4 p-4 rounded-lg border" style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)'}}>
       <div className="flex justify-between items-center mb-2">
-        <p className="text-sm font-bold text-yellow-300 uppercase tracking-wider">{title}</p>
+        <p className="text-sm font-bold uppercase tracking-wider" style={{color: 'var(--primary-color)'}}>{title}</p>
         {!isStatic && (
           <button
             onClick={handleCopy}
             className={`px-3 py-1 text-xs font-bold rounded ${
               copied
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-200 hover:bg-gray-300'
             } transition-colors`}
+            style={{color: copied ? 'white' : 'var(--text-dark)'}}
           >
             {copied ? 'Copied!' : 'Copy'}
           </button>
         )}
       </div>
-      <pre className="text-gray-300 text-sm whitespace-pre-wrap font-mono bg-black/20 p-3 rounded">
+      <pre className="text-sm whitespace-pre-wrap font-mono p-3 rounded" style={{backgroundColor: 'var(--bg-muted)', color: 'var(--text-dark)'}}>
         <code>{content}</code>
       </pre>
     </div>

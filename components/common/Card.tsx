@@ -9,7 +9,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(({ children, className, ...pr
     <div 
       ref={ref}
       {...props} 
-      className={`bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-6 md:p-8 ${className || ''}`}
+      className={`bg-white border border-gray-200 rounded-xl shadow-md p-6 md:p-8 ${className || ''}`}
+      style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)'}}
     >
       {children}
     </div>
@@ -29,19 +30,21 @@ export const StrategyAccordion: React.FC<StrategyAccordionProps> = ({ title, chi
   const isExpanded = isStatic || isOpen;
 
   return (
-    <div className="border border-gray-600 rounded-lg my-4">
+    <div className="border border-gray-200 rounded-lg my-4 bg-white" style={{borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-light)'}}>
       <button
         onClick={() => !isStatic && setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center p-3 bg-gray-700/70 hover:bg-gray-700 transition-colors rounded-t-lg disabled:cursor-default"
+        className="w-full flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-t-lg disabled:cursor-default"
+        style={{backgroundColor: 'var(--bg-muted)'}}
         aria-expanded={isExpanded}
         aria-controls="strategy-content"
         disabled={isStatic}
       >
-        <span className="font-semibold text-yellow-300">{title}</span>
+        <span className="font-semibold" style={{color: 'var(--primary-color)'}}>{title}</span>
         {!isStatic && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-6 w-6 text-yellow-300 transform transition-transform strategy-toggle-icon ${isOpen ? 'rotate-180' : ''}`}
+              className={`h-6 w-6 transform transition-transform strategy-toggle-icon ${isOpen ? 'rotate-180' : ''}`}
+              style={{color: 'var(--primary-color)'}}
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -53,7 +56,7 @@ export const StrategyAccordion: React.FC<StrategyAccordionProps> = ({ title, chi
         id="strategy-content"
         className={`transition-all duration-300 ease-in-out overflow-hidden strategy-content ${isExpanded ? 'max-h-screen' : 'max-h-0'}`}
       >
-        <div className="p-4 bg-gray-900/50 text-gray-300 text-sm">
+        <div className="p-4 text-sm" style={{backgroundColor: 'var(--bg-light)', color: 'var(--text-light)'}}>
             {children}
         </div>
       </div>

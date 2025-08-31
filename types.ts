@@ -202,6 +202,25 @@ export interface GeneratedMoneyModelMechanisms {
   mechanisms: MoneyModelMechanism[]; // An array containing one recommended tactic for each of the 4 types.
 }
 
+export interface ObjectionScenario {
+    objection: string;
+    psychologicalPrinciple: string;
+    response: string;
+}
+
+export interface SalesStrategy {
+    method: 'Cold Outreach' | 'Warm Outreach' | 'Paid Ads' | 'Content Marketing' | 'Affiliate Marketing';
+    strategy: string;
+    template: string;
+    worstCaseObjections: ObjectionScenario[];
+}
+
+export interface GeneratedSalesSystem {
+    title: string;
+    corePrinciple: string;
+    strategies: SalesStrategy[];
+}
+
 export interface GeneratedPlaybook {
   diagnosis: GeneratedDiagnosis;
   moneyModelAnalysis: GeneratedMoneyModelAnalysis;
@@ -215,6 +234,32 @@ export interface GeneratedPlaybook {
   marketingModel: GeneratedMarketingModel;
   salesFunnel: GeneratedSalesFunnel;
   kpiDashboard: GeneratedKpiDashboard;
+  salesSystem: GeneratedSalesSystem;
+}
+
+export interface KpiEntry {
+    date: string; // YYYY-MM-DD
+    values: Record<string, string>; // Kpi.name -> value
+}
+
+export interface WeeklyDebrief {
+    date: string; // YYYY-MM-DD
+    summary: string;
+    focus: string;
+}
+
+export interface AppState {
+    playbook: GeneratedPlaybook | null;
+    businessData: BusinessData | null;
+    kpiEntries: KpiEntry[];
+    weeklyDebriefs: WeeklyDebrief[];
+}
+
+
+export interface PreviewConfig {
+  type: string;
+  asset?: NonNullable<OfferStackItem['asset']>;
+  offer?: GeneratedOffer;
 }
 
 export interface ChatMessage {
