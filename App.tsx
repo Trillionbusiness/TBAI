@@ -290,10 +290,20 @@ const App: React.FC = () => {
                     console.error("Error generating PDF for path:", path, e);
                     setError(`PDF generation failed\n${e instanceof Error ? e.message : 'Unknown error'}`);
                 }
-                setZipProgress(((i + 1) / totalFiles) * 100);
+                // Allocate 95% of progress to PDF generation
+                setZipProgress(((i + 1) / totalFiles) * 95);
             }
+            
+            // Allocate final 5% to zipping process for better UX
+            const content = await zip.generateAsync(
+              { type: 'blob' },
+              (metadata) => {
+                const finalProgress = 95 + (metadata.percent * 0.05);
+                setZipProgress(finalProgress);
+              }
+            );
 
-            const content = await zip.generateAsync({ type: 'blob' });
+            setZipProgress(100);
             const link = document.createElement('a');
             link.href = URL.createObjectURL(content);
             link.download = 'Trillion_Business_Plan_Kit.zip';
