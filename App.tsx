@@ -108,42 +108,56 @@ const App: React.FC = () => {
       setLoadingProgress((completedSteps / totalSteps) * 100);
     };
 
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
     try {
       updateProgress('Diagnosing your business...');
       const diagnosis = await generateDiagnosis(data);
+      await delay(1500);
       
       updateProgress('Analyzing your money model...');
       const moneyModelAnalysis = await generateMoneyModelAnalysis(data);
+      await delay(1500);
       
       updateProgress('Designing your new money model...');
       const moneyModel = await generateMoneyModel(data);
+      await delay(1500);
       
       updateProgress('Building your monetization toolkit...');
       const moneyModelMechanisms = await generateMoneyModelMechanisms(data);
+      await delay(1500);
       
       updateProgress('Crafting your operations plan...');
       const operationsPlan = await generateOperationsPlan(data);
+      await delay(1500);
       
       updateProgress('Creating your first Grand Slam Offer...');
       const offer1 = await generateOffer1(data);
+      await delay(1500);
       
       updateProgress('Creating a second offer option...');
       const offer2 = await generateOffer2(data);
+      await delay(1500);
       
       updateProgress('Building your Profit Path...');
       const profitPath = await generateProfitPath(data);
+      await delay(1500);
       
       updateProgress('Designing your "Hello" Offer...');
       const downsell = await generateDownsell(data);
+      await delay(1500);
       
       updateProgress('Mapping your marketing model...');
       const marketingModel = await generateMarketingModel(data);
+      await delay(1500);
       
       updateProgress('Constructing your sales funnel...');
       const salesFunnel = await generateSalesFunnel(data);
+      await delay(1500);
 
       updateProgress('Building your Persuasion Engine...');
       const salesSystem = await generateSalesSystem(data);
+      await delay(1500);
       
       updateProgress('Finalizing your KPI dashboard...');
       const kpiDashboard = await generateKpiDashboard(data);
@@ -168,7 +182,11 @@ const App: React.FC = () => {
 
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      let errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+      if (errorMessage.includes('429') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+          errorMessage = 'The AI is a bit overwhelmed right now. Please wait a moment and try again. This can happen during peak usage.';
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
