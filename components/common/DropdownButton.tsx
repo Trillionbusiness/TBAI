@@ -69,32 +69,29 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
+            {/* FIX: Refactored the mapping logic to use a ternary operator for more robust type narrowing, resolving errors where properties on the `option` type were not being recognized correctly. */}
             {options.map((option, index) => {
-                if (option.separator) {
-                    return <div key={`sep-${index}`} className="border-t my-1 mx-2" style={{borderColor: 'var(--border-color)'}} />;
-                }
-                // FIX: Use an else block to make type narrowing explicit for the compiler.
-                else {
-                    return (
-                        <div key={option.label} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
-                            <button
-                                onClick={() => handleOptionClick(option.onClick)}
-                                className={`w-full text-left block px-2 py-2 rounded-md transition-colors ${option.special ? 'font-bold text-yellow-900 hover:bg-yellow-100' : 'text-gray-700 hover:bg-gray-100'}`}
-                                role="menuitem"
-                            >
-                                {option.label}
-                            </button>
-                            {option.onPreview && (
-                                 <button
-                                    onClick={() => handlePreviewClick(option.onPreview)}
-                                    className="ml-2 px-2 py-1 text-xs font-bold rounded capitalize bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
-                                 >
-                                     Preview
-                                 </button>
-                            )}
-                        </div>
-                    );
-                }
+              return option.separator ? (
+                <div key={`sep-${index}`} className="border-t my-1 mx-2" style={{borderColor: 'var(--border-color)'}} />
+              ) : (
+                <div key={option.label} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
+                    <button
+                        onClick={() => handleOptionClick(option.onClick)}
+                        className={`w-full text-left block px-2 py-2 rounded-md transition-colors ${option.special ? 'font-bold text-yellow-900 hover:bg-yellow-100' : 'text-gray-700 hover:bg-gray-100'}`}
+                        role="menuitem"
+                    >
+                        {option.label}
+                    </button>
+                    {option.onPreview && (
+                          <button
+                            onClick={() => handlePreviewClick(option.onPreview)}
+                            className="ml-2 px-2 py-1 text-xs font-bold rounded capitalize bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
+                          >
+                              Preview
+                          </button>
+                    )}
+                </div>
+              );
             })}
           </div>
         </div>
