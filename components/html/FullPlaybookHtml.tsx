@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { GeneratedPlaybook } from '../../types';
-import FullPlaybook from '../FullPlaybook';
+import FullPlaybook from '../../FullPlaybook';
 
 interface FullPlaybookHtmlProps {
   playbook: GeneratedPlaybook;
@@ -23,6 +23,7 @@ const FullPlaybookHtml: React.FC<FullPlaybookHtmlProps> = ({ playbook }) => {
       onDownloadAllAssets={emptyFunc}
       generatingAssetBundleFor={null}
       pdfProgress={0}
+      // FIX: Add missing props required by the updated FullPlaybook component.
       onDownloadZip={emptyFunc}
       isZipping={false}
       zipProgress={0}

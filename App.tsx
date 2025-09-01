@@ -11,7 +11,7 @@ import {
 } from './services/hormoziAiService';
 import Step1Form from './components/Step1Form';
 import ProgressBar from './components/common/ProgressBar';
-import FullPlaybook from './components/FullPlaybook';
+import FullPlaybook from './FullPlaybook';
 import DropdownButton from './components/common/DropdownButton';
 import AllPdfs from './components/pdf/AllPdfs';
 import PdfPreviewModal from './components/pdf/PdfPreviewModal';
@@ -401,12 +401,18 @@ const App: React.FC = () => {
                     Start New Plan
                   </button>
                   <DropdownButton 
-                      label="Download Playbook" 
-                      isLoading={isGeneratingPdf && !generatingAsset && !generatingAssetBundleFor}
-                      progress={pdfProgress}
+                      label="Download Options" 
+                      isLoading={isGeneratingPdf || isZipping}
+                      progress={isZipping ? zipProgress : pdfProgress}
                       options={[
                           { label: 'Full Playbook (PDF)', onClick: () => handleDownloadPdf('full'), onPreview: () => handlePreviewPdf({type: 'full'}) },
-                          { label: 'Offline Interactive Plan (HTML)', onClick: handleDownloadOfflineApp, onPreview: null }
+                          { label: 'Business Scorecard (KPIs)', onClick: () => handleDownloadPdf('kpi-dashboard'), onPreview: () => handlePreviewPdf({type: 'kpi-dashboard'}) },
+                          { label: 'Offer Presentation Slides', onClick: () => handleDownloadPdf('offer-presentation'), onPreview: () => handlePreviewPdf({type: 'offer-presentation'}) },
+                          { label: 'Money Model Plan', onClick: () => handleDownloadPdf('cfa-model'), onPreview: () => handlePreviewPdf({type: 'cfa-model'}) },
+                          { separator: true },
+                          { label: 'Offline Interactive Plan (HTML)', onClick: handleDownloadOfflineApp, onPreview: null },
+                          { separator: true },
+                          { label: 'Buy Complete Plan Kit ($99 .zip)', onClick: handleDownloadZip, onPreview: null, special: true },
                       ]}
                   />
               </div>
@@ -425,14 +431,14 @@ const App: React.FC = () => {
             onDownloadAllAssets={(offer) => handleDownloadPdf('asset-bundle', undefined, offer)}
             generatingAssetBundleFor={generatingAssetBundleFor}
             pdfProgress={pdfProgress}
-            onDownloadZip={handleDownloadZip}
-            isZipping={isZipping}
-            zipProgress={zipProgress}
             kpiEntries={appState.kpiEntries}
             weeklyDebriefs={appState.weeklyDebriefs}
             onSaveKpiEntry={handleSaveKpiEntry}
             onGenerateDebrief={handleGenerateDebrief}
             isGeneratingDebrief={isGeneratingDebrief}
+            onDownloadZip={handleDownloadZip}
+            isZipping={isZipping}
+            zipProgress={zipProgress}
           />
       </main>
       

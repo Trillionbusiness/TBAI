@@ -1,9 +1,14 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import CircularProgress from './CircularProgress';
 
+type DropdownOption = 
+  | { label: string; onClick: () => void; onPreview: (() => void) | null; special?: boolean; separator?: never; }
+  | { separator: true; label?: never; onClick?: never; onPreview?: never; special?: never; };
+
 interface DropdownButtonProps {
   label: string;
-  options: { label: string; onClick: () => void; onPreview: (() => void) | null }[];
+  options: DropdownOption[];
   isLoading?: boolean;
   progress: number;
 }
@@ -64,25 +69,33 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
-            {options.map((option) => (
-                <div key={option.label} className="flex justify-between items-center px-2 py-1 text-sm group">
-                    <button
-                        onClick={() => handleOptionClick(option.onClick)}
-                        className="w-full text-left text-gray-700 block px-2 py-2 hover:bg-gray-100 rounded-md"
-                        role="menuitem"
-                    >
-                        {option.label}
-                    </button>
-                    {option.onPreview && (
-                         <button
-                            onClick={() => handlePreviewClick(option.onPreview)}
-                            className="ml-2 px-2 py-1 text-xs font-bold rounded capitalize bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
-                         >
-                             Preview
-                         </button>
-                    )}
-                </div>
-            ))}
+            {options.map((option, index) => {
+                if (option.separator) {
+                    return <div key={`sep-${index}`} className="border-t my-1 mx-2" style={{borderColor: 'var(--border-color)'}} />;
+                }
+                // FIX: Use an else block to make type narrowing explicit for the compiler.
+                else {
+                    return (
+                        <div key={option.label} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
+                            <button
+                                onClick={() => handleOptionClick(option.onClick)}
+                                className={`w-full text-left block px-2 py-2 rounded-md transition-colors ${option.special ? 'font-bold text-yellow-900 hover:bg-yellow-100' : 'text-gray-700 hover:bg-gray-100'}`}
+                                role="menuitem"
+                            >
+                                {option.label}
+                            </button>
+                            {option.onPreview && (
+                                 <button
+                                    onClick={() => handlePreviewClick(option.onPreview)}
+                                    className="ml-2 px-2 py-1 text-xs font-bold rounded capitalize bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
+                                 >
+                                     Preview
+                                 </button>
+                            )}
+                        </div>
+                    );
+                }
+            })}
           </div>
         </div>
       )}
