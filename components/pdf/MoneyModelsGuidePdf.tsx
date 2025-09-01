@@ -79,82 +79,23 @@ const MoneyModelsGuidePdf: React.FC = () => {
                 <Table 
                     headers={["Acquisition Channel", "Cost Components", "Example Monthly Cost", "Total Monthly Cost", "New Customers Acquired", "Calculated CAC"]}
                     rows={[
-                        ["Paid Advertising", "Ad Spend, Media Buyer Salary, Sales Commissions, Software", "$20,000, $4,000, $10,000, $1,000", "$35,000", "10", "$3,500"],
-                        ["Content Marketing", "Media Team Payroll, Sales Commissions", "$10,000, $1,000", "$11,000", "10", "$1,100"],
-                        ["Direct Outreach", "Prospector Salary, Sales Commissions, Software", "$3,000, $800, $200", "$4,000", "8", "$500"]
+                        ["Paid Advertising", "Ad Spend, Media Buyer Salary, Sales Commissions, Software", "$20,000, $4,000, $1,000, $1,000", "$26,000", "50", "$520"],
+                        ["Content Marketing", "Content Creator Salary, SEO Tools, Video Editor", "$5,000, $500, $1,500", "$7,000", "20", "$350"],
+                        ["Cold Outreach", "Sales Rep Salary, Outreach Software, Data Provider", "$6,000, $300, $700", "$7,000", "15", "$467"]
                     ]}
                 />
-                <SectionTitle isSub>Strategies for Lowering CAC</SectionTitle>
-                <P><strong>The Power of "Free":</strong> "Free" and "new" are the most potent words in advertising. Free offers can dramatically increase lead flow by removing all friction and risk.</P>
-                <P><strong>The Optimization Framework:</strong> Create Flow {"->"} Monetize {"->"} Add Friction. Start with a compelling, low-friction offer to maximize leads, ensure you can convert them, and then add qualification steps to improve lead quality.</P>
                 
-                <SectionTitle>Gross Profit: The Engine of Scalable Growth</SectionTitle>
-                <P>Gross Profit (GP) is the lifeblood of a scalable business. It is the difference between the price a customer pays and the Cost of Goods Sold (COGS). A critical benchmark for service-based businesses is to maintain gross margins of at least 80%.</P>
-                
-                <SectionTitle>Payback Period: The Critical Element of Speed</SectionTitle>
-                <P>The Payback Period (PPD) measures the speed at which a business recoups its investment. The key to shortening the payback period is to make additional offers to the customer within the first 30 days of acquisition, capitalizing on their "hyper-buying mode."</P>
-                
-                <SectionTitle>CFA, Money Models: Introducing Client Financed Acquisition</SectionTitle>
-                <P>Client Financed Acquisition (CFA) is when the gross profit from a single client within the first 30 days is greater than the cost of acquiring that customer. This leads to three levels of advertising mastery:</P>
-                <OL items={[
-                    <><strong>Level 1: The Viable Business (LTGP>CAC):</strong> Profitable over time, but may be cash-flow constrained.</>,
-                    <><strong>Level 2: The Self-Funding Business (30-Day GP>CAC):</strong> Acquiring customers for free, limited only by credit line.</>,
-                    <><strong>Level 3: The Compounding Business (30-Day GP>2xCAC):</strong> Each customer pays for themselves and the next customer, removing all financial limits to growth.</>
-                ]} />
-                
-                <SectionTitle>4 Types of Offers: The Four-Pronged Framework</SectionTitle>
-                <Table
-                    headers={["Offer Type", "Primary Objective", "Key Metric Influenced", "Ideal Timing", "Example Models"]}
+                <SectionTitle>The 3 Levels of Money Models</SectionTitle>
+                <P>Money Models are not monolithic; they represent a hierarchy of strategic sophistication. A business's ability to scale is directly proportional to its position on this hierarchy. The ultimate goal is to ascend from mere viability to a state of compounding, self-funded growth.</P>
+                <Table 
+                    headers={["Level", "Model Name & Core Principle", "Strategic Focus"]}
                     rows={[
-                        ["Attraction", "Liquidate CAC", "CAC, Lead Volume", "First Interaction", "Win Your Money Back, Decoy Offer, Free Giveaway"],
-                        ["Upsell", "Maximize Profit", "Average Order Value, 30-Day GP", "Immediately Post-Purchase", "Anchor Upsell, Menu Upsell, Rollover Upsell"],
-                        ["Downsell", "Maximize Conversion", "Conversion Rate", "After a 'No'", "Payment Plan, Free Trial, Feature Downsell"],
-                        ["Continuity", "Stabilize Cash Flow & Maximize LTV", "LTV, Churn Rate", "End of Initial Service / As an Upsell", "Continuity Bonus, Waived Fee, Continuity Discount"]
+                        ["1", <span><strong>Level 1: The Viable Business (LTGP&gt;CAC):</strong> Profitable over the customer's lifetime.</span>, "Focus on long-term value and retention."],
+                        ["2", <span><strong>Level 2: The Self-Funding Business (30-Day GP&gt;CAC):</strong> Acquiring customers breaks even within 30 days.</span>, "Focus on short-term cash flow and front-end offers."],
+                        ["3", <span><strong>Level 3: The Compounding Business (30-Day GP&gt;2xCAC):</strong> Each customer pays for the next two.</span>, "Focus on aggressive scaling and market domination."],
                     ]}
                 />
-
-                <SectionTitle>Attraction Offers</SectionTitle>
-                <UL items={[
-                    <><strong>Win Your Money Back:</strong> Customer pays upfront and gets a refund or credit if they hit a specific goal.</>,
-                    <><strong>Free Giveaways:</strong> A high-value grand prize draw where all non-winners get a discount offer.</>,
-                    <><strong>Decoy Offers:</strong> Advertise a basic free/cheap option, but present a much better premium option alongside it to encourage upgrades.</>,
-                    <><strong>Buy X Get Y Free:</strong> Reframes a discount into a more compelling "free" offer (e.g., "Buy 1, Get 2 Free" instead of "66% off").</>,
-                    <><strong>Pay Less Now or Pay More Later:</strong> A risk-free trial where the customer pays later, with an option for a discount if they pay now.</>,
-                    <><strong>Free with Consumption:</strong> Deliver significant value upfront (webinar, challenge) before presenting a high-ticket offer.</>
-                ]} />
-
-                <SectionTitle>Upsell Offers</SectionTitle>
-                 <UL items={[
-                    <><strong>Classic Upsell:</strong> The "fries with that" offer. The next logical product/service they need.</>,
-                    <><strong>Menu Upsell:</strong> A 4-step process: Unsell (build trust), Prescribe (tell them what they need), Ask A or B (assumed close), and Make it Easy to Pay.</>,
-                    <><strong>Anchor Upsell:</strong> Present a very expensive option first to make the main offer seem like a bargain.</>,
-                    <><strong>Rollover Upsell:</strong> Credit a customer's past purchase towards a new, more expensive one.</>
-                ]} />
-
-                <SectionTitle>Downsell Offers</SectionTitle>
-                <UL items={[
-                    <><strong>Payment Plans:</strong> Break a large price into smaller, manageable payments.</>,
-                    <><strong>Free Trials (with Penalty):</strong> A free trial that requires a credit card and charges a fee for non-compliance with required actions.</>,
-                    <><strong>Feature Downsells:</strong> Lower the price by removing features, forcing the customer to weigh cost vs. value.</>
-                ]} />
-                
-                <SectionTitle>Continuity Offers</SectionTitle>
-                 <UL items={[
-                    <><strong>Continuity Bonus:</strong> Give a high-value bonus for free to customers who sign up for a subscription.</>,
-                    <><strong>Continuity Discount:</strong> Offer free or discounted time in exchange for a longer-term commitment.</>,
-                    <><strong>Waived Fee:</strong> Present a large setup fee that is waived if the customer agrees to a long-term contract.</>
-                ]} />
-
-                <SectionTitle>Next Steps: Make Your Own Money Model</SectionTitle>
-                <P>The process of building a money model should be iterative. Don't try to do everything at once.</P>
-                <OL items={[
-                    "Perfect an Attraction Offer.",
-                    "Add an Upsell Offer.",
-                    "Add a Downsell Offer.",
-                    "Add a Continuity Offer."
-                ]} />
-                <P>Remember: simple scales, fancy fails. The goal is to create the simplest sequence of offers that achieves Client-Financed Acquisition. Once you master this, cash will no longer be a constraint, and your growth will be truly limitless.</P>
-
+                <P>Your entire business plan is designed to help you build and operate at Level 3.</P>
             </main>
         </div>
     );
