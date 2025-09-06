@@ -41,7 +41,7 @@ const businessCategories = [
 
 
 const InputField: React.FC<{
-    id: string,
+    id: keyof BusinessData,
     label: string,
     value: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
@@ -93,7 +93,7 @@ const InputField: React.FC<{
 );
 
 
-const SelectField: React.FC<{ id: string, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, children: React.ReactNode }> = ({ id, label, value, onChange, children }) => (
+const SelectField: React.FC<{ id: keyof BusinessData, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, children: React.ReactNode }> = ({ id, label, value, onChange, children }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium mb-1" style={{color: 'var(--text-light)'}}>{label}</label>
         <select
@@ -111,7 +111,7 @@ const SelectField: React.FC<{ id: string, label: string, value: string, onChange
     </div>
 );
 
-const RadioGroupField: React.FC<{ id: string, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, options: { label: string, value: string }[] }> = ({ id, label, value, onChange, options }) => (
+const RadioGroupField: React.FC<{ id: keyof BusinessData, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, options: { label: string, value: string }[] }> = ({ id, label, value, onChange, options }) => (
     <div>
         <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-light)'}}>{label}</label>
         <div className="flex items-center space-x-6">
@@ -163,6 +163,9 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
     dailyTimeCommitment: '',
     businessStage: 'existing',
     fundingStatus: undefined,
+    // New diagnostic fields
+    leadFlowConsistency: 'Inconsistent',
+    closingRate: '<20%',
   });
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
@@ -176,7 +179,7 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
-        const newState = { ...prev, [name]: value };
+        const newState: BusinessData = { ...prev, [name]: value };
         if (name === 'businessStage' && value === 'existing') {
             newState.fundingStatus = undefined;
         }
@@ -213,6 +216,7 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
         biggestChallenge: '', coreOffer: '', targetClient: '', offerTimeline: 'one_time', hasSalesTeam: 'no',
         monthlyAdSpend: '0', profitGoal: '', hasCertifications: 'no', hasTestimonials: 'no', physicalCapacity: '',
         ancillaryProducts: '', perceivedMaxPrice: '', dailyTimeCommitment: '', businessStage: 'existing', fundingStatus: undefined,
+        leadFlowConsistency: 'Inconsistent', closingRate: '<20%',
         ...example,
     };
 
@@ -370,6 +374,9 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
                     ]}
                 />
             )}
+             <div className="md:col-span-2">
+                <InputField id="biggestChallenge" label="Biggest Challenge or Question" value={formData.biggestChallenge} onChange={handleChange} placeholder="e.g., 'Not enough leads', 'Sales calls don't close', 'We're busy but not profitable'" onAutofill={() => handleGenerateField('biggestChallenge')} isAutofilling={generatingField === 'biggestChallenge'} />
+            </div>
         </div>
         
         <FormSectionHeader>Your Business</FormSectionHeader>
@@ -388,37 +395,23 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
             <InputField id="monthlyRevenue" label="Current Monthly Revenue (use 0 for new ideas)" value={formData.monthlyRevenue} onChange={handleChange} placeholder="e.g., 50000" type="text" />
         </div>
 
-        <FormSectionHeader>Your Offer</FormSectionHeader>
+        <FormSectionHeader>Your Offer & Customers</FormSectionHeader>
         <div className="grid md:grid-cols-2 gap-6">
             <InputField id="marketingMethods" label="Current or Planned Marketing" value={formData.marketingMethods} onChange={handleChange} placeholder="e.g., Social Media, Referrals" onAutofill={() => handleGenerateField('marketingMethods')} isAutofilling={generatingField === 'marketingMethods'} />
-            <InputField id="biggestChallenge" label="Biggest Challenge or Question" value={formData.biggestChallenge} onChange={handleChange} placeholder="What holds you back?" onAutofill={() => handleGenerateField('biggestChallenge')} isAutofilling={generatingField === 'biggestChallenge'} />
             <InputField id="coreOffer" label="Main Offer & Price (or idea)" value={formData.coreOffer} onChange={handleChange} placeholder="e.g., 12-Week Program for 2000" onAutofill={() => handleGenerateField('coreOffer')} isAutofilling={generatingField === 'coreOffer'} />
-            <SelectField id="offerTimeline" label="Offer Timeline" value={formData.offerTimeline} onChange={handleChange}>
-                <option value="" disabled>Select Timeline</option>
-                <option value="monthly">Per Month</option>
-                <option value="quarterly">Per Quarter</option>
-                <option value="half_yearly">Per Half-Year</option>
-                <option value="one_time">One-Time Package</option>
+            <SelectField id="leadFlowConsistency" label="Lead Flow Consistency" value={formData.leadFlowConsistency} onChange={handleChange}>
+                <option value="Predictable">Predictable & Consistent</option>
+                <option value="Inconsistent">Inconsistent (Feast or Famine)</option>
+                <option value="None">None / Just Starting</option>
+            </SelectField>
+             <SelectField id="closingRate" label="Sales Closing Rate" value={formData.closingRate} onChange={handleChange}>
+                <option value=">50%">High (&gt;50%)</option>
+                <option value="20-50%">Average (20-50%)</option>
+                <option value="<20%">Low (&lt;20%)</option>
+                <option value="N/A">Don't Know / N/A</option>
             </SelectField>
             <div className="md:col-span-2">
                 <InputField id="targetClient" label="Your Ideal Customer" value={formData.targetClient} onChange={handleChange} placeholder="Describe your ideal customer" onAutofill={() => handleGenerateField('targetClient')} isAutofilling={generatingField === 'targetClient'}/>
-            </div>
-        </div>
-
-        <FormSectionHeader>Your Tools & Goals</FormSectionHeader>
-        <div className="grid md:grid-cols-2 gap-6">
-            <InputField id="dailyTimeCommitment" label="Daily Hours for Growth" value={formData.dailyTimeCommitment} onChange={handleChange} placeholder="e.g., 2" type="number" />
-            <InputField id="profitGoal" label="Desired Monthly Profit" value={formData.profitGoal} onChange={handleChange} placeholder="e.g., 100000" type="text" />
-            <RadioGroupField id="hasSalesTeam" label="Have or plan a sales team?" value={formData.hasSalesTeam} onChange={handleChange} options={[{label: 'Yes', value: 'yes'}, {label: 'No', value: 'no'}]} />
-            <RadioGroupField id="hasCertifications" label="Have or need certifications?" value={formData.hasCertifications} onChange={handleChange} options={[{label: 'Yes', value: 'yes'}, {label: 'No', value: 'no'}]} />
-            <InputField id="monthlyAdSpend" label="Monthly Ad Spend (current or planned)" value={formData.monthlyAdSpend} onChange={handleChange} placeholder="e.g., 5000" type="text" />
-            <InputField id="physicalCapacity" label="Location Capacity (if any)" value={formData.physicalCapacity} onChange={handleChange} placeholder="e.g., 100 customers" type="text" required={false} />
-            <RadioGroupField id="hasTestimonials" label="Have testimonials?" value={formData.hasTestimonials} onChange={handleChange} options={[{label: 'Yes', value: 'yes'}, {label: 'No', value: 'no'}]} />
-             <div className="md:col-span-2">
-                <InputField id="ancillaryProducts" label="Other Items for Sale?" value={formData.ancillaryProducts} onChange={handleChange} placeholder="List any extra products or ideas" required={false} onAutofill={() => handleGenerateField('ancillaryProducts')} isAutofilling={generatingField === 'ancillaryProducts'} />
-            </div>
-             <div className="md:col-span-2">
-                <InputField id="perceivedMaxPrice" label="What would a perfect result be worth to a customer?" value={formData.perceivedMaxPrice} onChange={handleChange} placeholder="e.g., 10000" type="text" />
             </div>
         </div>
         

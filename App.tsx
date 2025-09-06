@@ -11,11 +11,23 @@ import {
 } from './services/hormoziAiService';
 import Step1Form from './components/Step1Form';
 import ProgressBar from './components/common/ProgressBar';
-import FullPlaybook from './FullPlaybook';
+import FullPlaybook from './components/FullPlaybook';
 import DropdownButton from './components/common/DropdownButton';
 import AllPdfs from './components/pdf/AllPdfs';
 import PdfPreviewModal from './components/pdf/PdfPreviewModal';
 import FullPlaybookHtml from './components/html/FullPlaybookHtml';
+import FullPlaybookPdf from './components/pdf/FullPlaybookPdf';
+import KpiDashboardPdf from './components/pdf/KpiDashboardPdf';
+import OfferPresentationPdf from './components/pdf/OfferPresentationPdf';
+import DownsellPamphletPdf from './components/pdf/DownsellPamphletPdf';
+import TripwireFollowupPdf from './components/pdf/TripwireFollowupPdf';
+import CfaModelPdf from './components/pdf/CfaModelPdf';
+import ValueStackAssetsPdf from './components/pdf/ValueStackAssetsPdf';
+import AssetPdf from './components/pdf/AssetPdf';
+import LandingPagePdf from './components/pdf/LandingPagePdf';
+import ZipGuidePdf from './components/pdf/ZipGuidePdf';
+import ConceptsGuidePdf from './components/pdf/ConceptsGuidePdf';
+import MoneyModelsGuidePdf from './components/pdf/MoneyModelsGuidePdf';
 
 
 declare global {
@@ -26,6 +38,38 @@ declare global {
 }
 
 const APP_STATE_KEY = 'trillionBusinessAppState';
+
+const sanitizeName = (name: string) => name.replace(/[\\/:*?"<>|]/g, '').replace(/ /g, '_');
+
+const createPdfInfoQueue = (playbook: GeneratedPlaybook, businessData: BusinessData) => {
+    const queue: {type: string, path: string, asset?: any, offer?: any}[] = [];
+
+    queue.push({ type: 'zip-guide', path: '00_START_HERE_Guide.pdf' });
+    queue.push({ type: 'full', path: '01_Core_Plan/Full_Business_Playbook.pdf' });
+    queue.push({ type: 'concepts-guide', path: '01_Core_Plan/Business_Concepts_Guide.pdf' });
+    queue.push({ type: 'kpi-dashboard', path: '01_Core_Plan/Business_Scorecard_(KPIs).pdf' });
+    queue.push({ type: 'offer-presentation', path: '01_Core_Plan/Offer_Presentation_Slides.pdf' });
+    queue.push({ type: 'cfa-model', path: '02_Money_Models/Your_Money_Making_Plan.pdf' });
+    queue.push({ type: 'landing-page', path: '03_Marketing_Materials/High-Converting_Landing_Page.pdf' });
+    queue.push({ type: 'downsell-pamphlet', path: '03_Marketing_Materials/Simple_Offer_Flyer.pdf' });
+    queue.push({ type: 'tripwire-followup', path: '03_Marketing_Materials/Customer_Follow-Up_Note.pdf' });
+
+    const addOfferAssetsToQueue = (offer: GeneratedOffer, folder: string) => {
+        queue.push({ type: 'asset-bundle', path: `${folder}/00_Full_Asset_Bundle.pdf`, offer: offer });
+        offer.stack.forEach(item => {
+            if (item.asset) {
+                queue.push({ type: 'single-asset', path: `${folder}/${sanitizeName(item.asset.type)}_${sanitizeName(item.asset.name)}.pdf`, asset: item.asset });
+            }
+        });
+    };
+
+    addOfferAssetsToQueue(playbook.offer1, `04_Asset_Library/${sanitizeName(playbook.offer1.name)}`);
+    addOfferAssetsToQueue(playbook.offer2, `04_Asset_Library/${sanitizeName(playbook.offer2.name)}`);
+    addOfferAssetsToQueue(playbook.downsell.offer, `04_Asset_Library/${sanitizeName(playbook.downsell.offer.name)}`);
+    
+    return queue;
+};
+
 
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(() => {
@@ -64,14 +108,15 @@ const App: React.FC = () => {
   const [generatingAsset, setGeneratingAsset] = useState<OfferStackItem | null>(null);
   const [generatingAssetBundleFor, setGeneratingAssetBundleFor] = useState<string | null>(null);
 
-  const [showAllPdfsForZip, setShowAllPdfsForZip] = useState(false);
   const [previewConfig, setPreviewConfig] = useState<PreviewConfig | null>(null);
   const [isGeneratingOfflineApp, setIsGeneratingOfflineApp] = useState(false);
   const [isGeneratingDebrief, setIsGeneratingDebrief] = useState(false);
   
+  const [pdfInfoQueue, setPdfInfoQueue] = useState<any[]>([]);
+  const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
+  const zipRef = useRef<JSZip | null>(null);
 
   const pdfSingleRenderRef = useRef<HTMLDivElement>(null);
-  const pdfZipRenderRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     try {
@@ -204,7 +249,7 @@ const App: React.FC = () => {
         const { renderToStaticMarkup } = await import('react-dom/server');
         const staticHtml = renderToStaticMarkup(<FullPlaybookHtml playbook={appState.playbook} />);
         
-        const fullHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Trillion Business Plan - Offline Interactive Plan</title><script src="https://cdn.tailwindcss.com"></script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');:root {--bg-light: #ffffff; --bg-muted: #f8f9fa; --text-dark: #212121; --text-light: #5f5f5f;--border-color: #dee2e6; --primary-color: #147273; --accent-color: #82D5E3;}body { margin: 0; background-color: var(--bg-muted); color: var(--text-dark); font-family: 'Inter', sans-serif; }.playbook-step-content { transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out; }.strategy-content { transition: max-height 0.3s ease-in-out; }.strategy-toggle-icon { transition: transform 0.3s; }</style></head><body class="p-4 md:p-8"><div class="max-w-7xl mx-auto">${staticHtml}</div><script>document.addEventListener('DOMContentLoaded', () => {document.querySelectorAll('.playbook-step button').forEach(button => {button.addEventListener('click', () => {const content = button.nextElementSibling; const icon = button.querySelector('.playbook-step-toggle-icon'); if (content.style.maxHeight && content.style.maxHeight !== '0px') {content.style.maxHeight = '0px'; content.style.opacity = '0'; icon.style.transform = '';} else {content.style.maxHeight = content.scrollHeight + 'px'; content.style.opacity = '1'; icon.style.transform = 'rotate(180deg)';}});});document.querySelectorAll('.strategy-accordion button').forEach(button => {button.addEventListener('click', () => {const content = button.nextElementSibling; const icon = button.querySelector('.strategy-toggle-icon'); if (content.style.maxHeight && content.style.maxHeight !== '0px') {content.style.maxHeight = '0px'; icon.style.transform = '';} else {content.style.maxHeight = content.scrollHeight + 'px'; icon.style.transform = 'rotate(180deg)';}});});});<\/script></body></html>`;
+        const fullHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Trillion Business Plan - Offline Interactive Plan</title><script src="https://cdn.tailwindcss.com"></script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');:root {--bg-light: #ffffff; --bg-muted: #f8f9fa; --text-dark: #212121; --text-light: #5f5f5f;--border-color: #dee2e6; --primary-color: #147273; --accent-color: #82D5E3;}body { margin: 0; background-color: var(--bg-muted); color: var(--text-dark); font-family: 'Inter', sans-serif; }.playbook-step-content { transition: max-height 0.7s ease-in-out, opacity 0.7s ease-in-out; }.strategy-content { transition: max-height 0.3s ease-in-out; }.strategy-toggle-icon { transition: transform 0.3s; }</style></head><body class="p-4 md:p-8"><div class="max-w-7xl mx-auto">${staticHtml}</div><script>document.addEventListener('DOMContentLoaded', () => {document.querySelectorAll('.playbook-step button').forEach(button => {button.addEventListener('click', () => {const content = button.nextElementSibling; const icon = button.querySelector('.playbook-step-toggle-icon'); if (content.style.maxHeight && content.style.maxHeight !== '0px') {content.style.maxHeight = '0px'; content.style.opacity = '0'; icon.style.transform = '';} else {content.style.maxHeight = content.scrollHeight + 'px'; content.style.opacity = '1'; icon.style.transform = 'rotate(180deg)';}});});document.querySelectorAll('.strategy-accordion button').forEach(button => {button.addEventListener('click', () => {const content = button.nextElementSibling; const icon = button.querySelector('.strategy-toggle-icon'); if (content.style.maxHeight && content.style.maxHeight !== '0px') {content.style.maxHeight = '0px'; icon.style.transform = '';} else {content.style.maxHeight = content.scrollHeight + 'px'; icon.style.transform = 'rotate(180deg)';}});});});<\/script></body></html>`;
 
         const blob = new Blob([fullHtml], { type: 'text/html' });
         const link = document.createElement('a');
@@ -222,15 +267,15 @@ const App: React.FC = () => {
   };
 
   const generateSinglePdf = async (element: HTMLElement, fileName: string) => {
-      const canvas = await window.html2canvas(element, { scale: 2, useCORS: true, allowTaint: true });
+      const canvas = await window.html2canvas(element, { scale: 1.5, useCORS: true, allowTaint: true });
       setPdfProgress(50);
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
       const pdf = new window.jspdf.jsPDF({
           orientation: 'p',
           unit: 'px',
           format: [canvas.width, canvas.height],
       });
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
       setPdfProgress(80);
       pdf.save(fileName);
       setPdfProgress(100);
@@ -246,7 +291,7 @@ const App: React.FC = () => {
   };
   
   useEffect(() => {
-    if (pdfConfig && pdfSingleRenderRef.current) {
+    if (pdfConfig && !isZipping && pdfSingleRenderRef.current) {
         const generate = async () => {
             await new Promise(resolve => setTimeout(resolve, 100));
             const element = pdfSingleRenderRef.current?.children[0] as HTMLElement;
@@ -273,55 +318,31 @@ const App: React.FC = () => {
         };
         generate();
     }
-  }, [pdfConfig]);
+  }, [pdfConfig, isZipping]);
 
   const handleDownloadZip = () => {
     if (!appState.playbook || !appState.businessData || isZipping || isGeneratingPdf) return;
+    
+    const queue = createPdfInfoQueue(appState.playbook, appState.businessData);
+    setPdfInfoQueue(queue);
+    setCurrentPdfIndex(0);
     setIsZipping(true);
     setZipProgress(0);
-    setShowAllPdfsForZip(true);
   };
 
   useEffect(() => {
-    if (showAllPdfsForZip && pdfZipRenderRef.current) {
-        const zipAndDownload = async () => {
-            await new Promise(resolve => setTimeout(resolve, 100)); 
-            const zip = new JSZip();
-            const pdfElements = pdfZipRenderRef.current!.querySelectorAll('[data-pdf-output]');
-            const totalFiles = pdfElements.length;
+    if (!isZipping) return;
 
-            for (let i = 0; i < totalFiles; i++) {
-                const element = pdfElements[i] as HTMLElement;
-                const path = element.dataset.pdfPath || `document_${i + 1}.pdf`;
-                try {
-                    const canvas = await window.html2canvas(element, { scale: 2, useCORS: true, allowTaint: true });
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new window.jspdf.jsPDF({
-                        orientation: 'p',
-                        unit: 'px',
-                        format: [canvas.width, canvas.height]
-                    });
-                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-                    const pdfBlob = pdf.output('blob');
-                    zip.file(path, pdfBlob);
-                } catch (e) {
-                    console.error("Error generating PDF for path:", path, e);
-                    setError(`PDF generation failed\n${e instanceof Error ? e.message : 'Unknown error'}`);
-                }
-                // Allocate 95% of progress to PDF generation
-                setZipProgress(((i + 1) / totalFiles) * 95);
-            }
-            
-            // Allocate final 5% to zipping process for better UX
-            const content = await zip.generateAsync(
-              { type: 'blob' },
-              (metadata) => {
-                const finalProgress = 95 + (metadata.percent * 0.05);
-                setZipProgress(finalProgress);
-              }
-            );
+    const processQueue = async () => {
+        if (!zipRef.current) { // Initialize on first run
+            zipRef.current = new JSZip();
+        }
 
-            setZipProgress(100);
+        if (currentPdfIndex >= pdfInfoQueue.length) {
+            // Finished
+            const content = await zipRef.current.generateAsync({ type: 'blob' }, (metadata) => {
+                setZipProgress(95 + (metadata.percent * 0.05));
+            });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(content);
             link.download = 'Trillion_Business_Plan_Kit.zip';
@@ -329,12 +350,59 @@ const App: React.FC = () => {
             link.click();
             document.body.removeChild(link);
 
-            setShowAllPdfsForZip(false);
+            // cleanup
             setIsZipping(false);
-        };
-        zipAndDownload();
-    }
-  }, [showAllPdfsForZip, appState.playbook, appState.businessData]);
+            setPdfInfoQueue([]);
+            setCurrentPdfIndex(0);
+            zipRef.current = null;
+            setPdfConfig(null);
+            return;
+        }
+        
+        // Set config for the current PDF in queue
+        const currentPdfInfo = pdfInfoQueue[currentPdfIndex];
+        setPdfConfig({
+            type: currentPdfInfo.type,
+            singleAsset: currentPdfInfo.asset,
+            assetBundle: currentPdfInfo.offer,
+        });
+
+        // Wait for render
+        await new Promise(resolve => setTimeout(resolve, 200)); 
+
+        if (!pdfSingleRenderRef.current) {
+            setCurrentPdfIndex(idx => idx + 1); // skip
+            return;
+        }
+        const element = pdfSingleRenderRef.current.children[0] as HTMLElement;
+        
+        if (element) {
+            try {
+                const canvas = await window.html2canvas(element, { scale: 1.5, useCORS: true, allowTaint: true });
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'p',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+                const pdfBlob = pdf.output('blob');
+                zipRef.current.file(currentPdfInfo.path, pdfBlob);
+            } catch (e) {
+                 console.error("Error generating PDF for path:", currentPdfInfo.path, e);
+                 setError(`Failed to generate ${currentPdfInfo.path}`);
+            }
+        }
+        
+        setZipProgress(((currentPdfIndex + 1) / pdfInfoQueue.length) * 95);
+
+        // Move to next item
+        setCurrentPdfIndex(idx => idx + 1);
+    };
+    
+    processQueue();
+
+  }, [isZipping, currentPdfIndex, pdfInfoQueue]);
 
   const handleSaveKpiEntry = (entry: KpiEntry) => {
     setAppState(prev => {
@@ -455,18 +523,13 @@ const App: React.FC = () => {
       
       {/* Off-screen container for rendering PDFs */}
       <div style={{ position: 'absolute', top: '200vh', left: 0, zIndex: -100, opacity: 1, width: '800px' }}>
-          {pdfConfig && appState.playbook && appState.businessData && (
-              <div ref={pdfSingleRenderRef}>
+          <div ref={pdfSingleRenderRef}>
+              {pdfConfig && appState.playbook && appState.businessData && (
                   <div data-pdf-output-single>
                       <AllPdfs playbook={appState.playbook} businessData={appState.businessData} type={pdfConfig.type} singleAsset={pdfConfig.singleAsset} assetBundle={pdfConfig.assetBundle} />
                   </div>
-              </div>
-          )}
-          {showAllPdfsForZip && appState.playbook && appState.businessData && (
-            <div ref={pdfZipRenderRef}>
-              <AllPdfs playbook={appState.playbook} businessData={appState.businessData} type="all" />
-            </div>
-          )}
+              )}
+          </div>
       </div>
     </div>
   );

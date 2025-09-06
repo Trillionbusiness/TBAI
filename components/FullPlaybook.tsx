@@ -65,7 +65,6 @@ const PlaybookStep: React.FC<PlaybookStepProps> = ({ number, title, subtitle, ch
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
-                      {/* FIX: The path data was truncated. Completed the SVG path data. */}
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                 )}
@@ -79,7 +78,16 @@ const PlaybookStep: React.FC<PlaybookStepProps> = ({ number, title, subtitle, ch
             <button onClick={onToggle} className="w-full text-left cursor-pointer" disabled={isStatic}>
                 {headerContent}
             </button>
-            <div className={`transition-all duration-500 ease-in-out overflow-hidden playbook-step-content ${isExpanded ? 'max-h-[20000px] opacity-100 mt-8' : 'max-h-0 opacity-0'}`}>
+            <div 
+              className="playbook-step-content"
+              style={{
+                transition: 'max-height 0.7s ease-in-out, opacity 0.5s ease-in-out 0.2s, margin-top 0.7s ease-in-out',
+                maxHeight: isExpanded ? '20000px' : '0px',
+                opacity: isExpanded ? 1 : 0,
+                overflow: 'hidden',
+                marginTop: isExpanded ? '2rem' : '0'
+              }}
+            >
                 {children}
             </div>
         </section>
@@ -106,7 +114,7 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
     onGenerateDebrief,
     isGeneratingDebrief,
 }) => {
-  const [openStep, setOpenStep] = useState<number | null>(null);
+  const [openStep, setOpenStep] = useState<number | null>(1);
 
   const toggleStep = (stepNumber: number) => {
     if (isStatic) return;
@@ -116,8 +124,8 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
   const allSteps = [
     { 
       number: 1, 
-      title: 'Diagnosis & Roadmap (The GPS)', 
-      subtitle: 'Your current location and the path to your destination.', 
+      title: 'Step 1: Find Your Bottleneck', 
+      subtitle: "First, we find the single biggest thing holding you back. The entire plan is built around fixing this one thing.", 
       component: (
         <div className="space-y-8">
           <Step2Diagnosis diagnosis={playbook.diagnosis} />
@@ -135,8 +143,8 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
     },
     { 
       number: 2, 
-      title: 'The Grand Slam Offer (The Foundation)', 
-      subtitle: 'The irresistible deal that makes people feel stupid saying no.', 
+      title: "Step 2: Create Your 'Grand Slam' Offer",
+      subtitle: "Next, we build an offer so good people feel stupid saying no. This is the foundation of all growth.",
       component: (
         <div className="space-y-8">
           <Step3Offers offer1={playbook.offer1} offer2={playbook.offer2} onDownloadAsset={onDownloadAsset} onPreviewAsset={onPreviewAsset} isAnyPdfGenerating={isAnyPdfGenerating} generatingAsset={generatingAsset} onDownloadAllAssets={onDownloadAllAssets} generatingAssetBundleFor={generatingAssetBundleFor} pdfProgress={pdfProgress} isStatic={isStatic} onPreviewPdf={onPreviewPdf} />
@@ -146,8 +154,21 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
     },
     { 
       number: 3, 
-      title: 'The Leads Engine', 
-      subtitle: 'The machine that finds your ideal customers.', 
+      title: 'Step 3: Build Your Money Machine', 
+      subtitle: "This is how you get paid to acquire customers, making growth automatic and removing cash as a constraint.",
+      component: (
+        <div className="space-y-8">
+          <MoneyModelAnalysis analysis={playbook.moneyModelAnalysis} />
+          <MoneyModelFunnel moneyModel={playbook.moneyModel} />
+          <Step4ProfitPath profitPath={playbook.profitPath} isStatic={isStatic} />
+          <MoneyModelMechanisms moneyModelMechanisms={playbook.moneyModelMechanisms} />
+        </div>
+      ) 
+    },
+    { 
+      number: 4, 
+      title: 'Step 4: Turn On the Faucet', 
+      subtitle: "With a killer offer and a profitable model, it's time to generate a flood of qualified leads.",
       component: (
         <div className="space-y-8">
           <Step5MarketingModel marketingModel={playbook.marketingModel} isStatic={isStatic} />
@@ -156,23 +177,10 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
         </div>
       ) 
     },
-    { 
-      number: 4, 
-      title: 'The Money Model (The Fuel System)', 
-      subtitle: 'The economic engine that funds your growth.', 
-      component: (
-        <div className="space-y-8">
-          <MoneyModelAnalysis analysis={playbook.moneyModelAnalysis} />
-          <MoneyModelMechanisms moneyModelMechanisms={playbook.moneyModelMechanisms} />
-          <MoneyModelFunnel moneyModel={playbook.moneyModel} />
-          <Step4ProfitPath profitPath={playbook.profitPath} isStatic={isStatic} />
-        </div>
-      ) 
-    },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {allSteps.map(step => (
         <PlaybookStep 
           key={step.number}

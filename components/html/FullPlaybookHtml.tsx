@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { GeneratedPlaybook } from '../../types';
-import FullPlaybook from '../../FullPlaybook';
+import FullPlaybook from '../FullPlaybook';
 
 interface FullPlaybookHtmlProps {
   playbook: GeneratedPlaybook;

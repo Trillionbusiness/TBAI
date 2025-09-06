@@ -23,6 +23,9 @@ export interface BusinessData {
   businessStage?: 'new' | 'existing';
   fundingStatus?: 'funded' | 'bootstrapped';
   category?: string;
+  // FIX: Added missing properties for new diagnostic fields from Step1Form.
+  leadFlowConsistency?: string;
+  closingRate?: string;
 }
 
 export interface GeneratedDiagnosis {
