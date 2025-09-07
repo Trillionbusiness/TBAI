@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GeneratedDownsell } from '../../types';
 
@@ -7,7 +8,7 @@ const DownsellPamphletPdf: React.FC<{ downsell: GeneratedDownsell }> = ({ downse
     }
 
     return (
-        <div className="p-10 bg-blue-100 font-sans text-gray-900 border-8 border-yellow-400 rounded-3xl relative overflow-hidden" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', height: '1131px', boxShadow: '0 0 30px rgba(0,0,0,0.1) inset' }}>
+        <div data-pdf-page="true" className="p-10 bg-blue-100 font-sans text-gray-900 border-8 border-yellow-400 rounded-3xl relative overflow-hidden" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', height: '1131px', boxShadow: '0 0 30px rgba(0,0,0,0.1) inset' }}>
             {/* Decorative elements */}
             <div className="absolute top-10 left-10 text-5xl transform -rotate-12">🎉</div>
             <div className="absolute top-20 right-10 text-6xl transform rotate-12">🎈</div>

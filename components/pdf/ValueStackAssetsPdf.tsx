@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { GeneratedOffer, OfferStackItem } from '../../types';
 import MarkdownRenderer from '../common/MarkdownRenderer';
 
 const PageLayout: React.FC<{ children: React.ReactNode, isCover?: boolean }> = ({ children, isCover = false }) => (
-    <div className={`p-12 bg-[#fdf8e1] font-sans text-gray-800 break-after-page relative overflow-hidden`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', border: '10px solid #c4a35a', borderStyle: 'double' }}>
+    <div data-pdf-page="true" className={`p-12 bg-[#fdf8e1] font-sans text-gray-800 break-after-page relative overflow-hidden`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', border: '10px solid #c4a35a', borderStyle: 'double' }}>
          <div style={{ position: 'absolute', top: 10, left: 10, right: 10, bottom: 10, border: '2px solid #e0cda8' }}></div>
         <div className="absolute top-8 left-8 text-3xl">✨</div>
         <div className="absolute top-8 right-8 text-3xl">✨</div>

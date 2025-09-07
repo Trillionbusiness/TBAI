@@ -262,27 +262,39 @@ const App: React.FC = () => {
     }
   };
   
-  const getCanvasOptions = (element: HTMLElement) => ({
+  const getCanvasOptions = () => ({
       scale: 1.5,
       useCORS: true,
       allowTaint: true,
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
   });
 
-  const generateSinglePdf = async (element: HTMLElement, fileName: string) => {
-      const canvas = await window.html2canvas(element, getCanvasOptions(element));
-      setPdfProgress(50);
-      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+  const generateMultiPagePdf = async (container: HTMLElement, fileName: string) => {
+      const pages = container.querySelectorAll('[data-pdf-page="true"]') as NodeListOf<HTMLElement>;
+      if (pages.length === 0) {
+          throw new Error("No content pages found to generate PDF. This is an application error.");
+      }
+
+      setPdfProgress(10);
+      const firstPage = pages[0];
+      const canvas = await window.html2canvas(firstPage, getCanvasOptions());
+      
       const pdf = new window.jspdf.jsPDF({
           orientation: 'p',
           unit: 'px',
           format: [canvas.width, canvas.height],
       });
-      pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
-      setPdfProgress(80);
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+      setPdfProgress(10 + (1 / pages.length) * 80);
+
+      for (let i = 1; i < pages.length; i++) {
+          const pageElement = pages[i];
+          const pageCanvas = await window.html2canvas(pageElement, getCanvasOptions());
+          pdf.addPage([pageCanvas.width, pageCanvas.height], 'p');
+          pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageCanvas.width, pageCanvas.height, undefined, 'FAST');
+          setPdfProgress(10 + ((i + 1) / pages.length) * 80);
+      }
+      
+      setPdfProgress(95);
       pdf.save(fileName);
       setPdfProgress(100);
   };
@@ -299,22 +311,22 @@ const App: React.FC = () => {
   useEffect(() => {
     if (pdfConfig && !isZipping && pdfSingleRenderRef.current) {
         const generate = async () => {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            const element = pdfSingleRenderRef.current?.children[0] as HTMLElement;
-            if (element) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            const container = pdfSingleRenderRef.current;
+            if (container) {
                 try {
                     let fileName = 'Trillion_Business_Plan.pdf';
                     if (pdfConfig.type === 'single-asset' && pdfConfig.singleAsset) {
-                        fileName = `${pdfConfig.singleAsset.name}.pdf`;
+                        fileName = `${sanitizeName(pdfConfig.singleAsset.name)}.pdf`;
                     } else if (pdfConfig.type === 'asset-bundle' && pdfConfig.assetBundle) {
-                        fileName = `${pdfConfig.assetBundle.name}_Asset_Bundle.pdf`;
+                        fileName = `${sanitizeName(pdfConfig.assetBundle.name)}_Asset_Bundle.pdf`;
                     } else {
-                        fileName = `${pdfConfig.type.replace('-', '_')}.pdf`;
+                        fileName = `${sanitizeName(pdfConfig.type)}.pdf`;
                     }
-                    await generateSinglePdf(element, fileName);
+                    await generateMultiPagePdf(container, fileName);
                 } catch(e) {
                     console.error("PDF generation failed", e);
-                    setError("Sorry, there was an error creating your PDF.");
+                    setError(e instanceof Error ? e.message : "Sorry, there was an error creating your PDF.");
                 }
             }
             setIsGeneratingPdf(false);
@@ -340,14 +352,16 @@ const App: React.FC = () => {
     if (!isZipping) return;
 
     const processQueue = async () => {
-        if (!zipRef.current) { // Initialize on first run
+        if (!zipRef.current) {
             zipRef.current = new JSZip();
         }
 
         if (currentPdfIndex >= pdfInfoQueue.length) {
-            // Finished
+            setZipProgress(95);
             const content = await zipRef.current.generateAsync({ type: 'blob' }, (metadata) => {
-                setZipProgress(95 + (metadata.percent * 0.05));
+                if (metadata.percent) {
+                    setZipProgress(95 + (metadata.percent * 0.05));
+                }
             });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(content);
@@ -356,7 +370,6 @@ const App: React.FC = () => {
             link.click();
             document.body.removeChild(link);
 
-            // cleanup
             setIsZipping(false);
             setPdfInfoQueue([]);
             setCurrentPdfIndex(0);
@@ -365,7 +378,6 @@ const App: React.FC = () => {
             return;
         }
         
-        // Set config for the current PDF in queue
         const currentPdfInfo = pdfInfoQueue[currentPdfIndex];
         setPdfConfig({
             type: currentPdfInfo.type,
@@ -373,27 +385,31 @@ const App: React.FC = () => {
             assetBundle: currentPdfInfo.offer,
         });
 
-        // Wait for render
         await new Promise(resolve => setTimeout(resolve, 200)); 
 
-        if (!pdfSingleRenderRef.current) {
-            setCurrentPdfIndex(idx => idx + 1); // skip
-            return;
-        }
-        const element = pdfSingleRenderRef.current.children[0] as HTMLElement;
-        
-        if (element) {
+        const container = pdfSingleRenderRef.current;
+        if (container) {
             try {
-                const canvas = await window.html2canvas(element, getCanvasOptions(element));
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                const pdf = new window.jspdf.jsPDF({
-                    orientation: 'p',
-                    unit: 'px',
-                    format: [canvas.width, canvas.height]
-                });
-                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
-                const pdfBlob = pdf.output('blob');
-                zipRef.current.file(currentPdfInfo.path, pdfBlob);
+                const pages = container.querySelectorAll('[data-pdf-page="true"]') as NodeListOf<HTMLElement>;
+                if (pages.length > 0) {
+                    const firstPage = pages[0];
+                    const canvas = await window.html2canvas(firstPage, getCanvasOptions());
+                    const pdf = new window.jspdf.jsPDF({
+                        orientation: 'p',
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
+                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, canvas.width, canvas.height, undefined, 'FAST');
+
+                    for (let i = 1; i < pages.length; i++) {
+                        const pageElement = pages[i];
+                        const pageCanvas = await window.html2canvas(pageElement, getCanvasOptions());
+                        pdf.addPage([pageCanvas.width, pageCanvas.height], 'p');
+                        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, pageCanvas.width, pageCanvas.height, undefined, 'FAST');
+                    }
+                    const pdfBlob = pdf.output('blob');
+                    zipRef.current.file(currentPdfInfo.path, pdfBlob);
+                }
             } catch (e) {
                  console.error("Error generating PDF for path:", currentPdfInfo.path, e);
                  setError(`Failed to generate ${currentPdfInfo.path}`);
@@ -401,8 +417,6 @@ const App: React.FC = () => {
         }
         
         setZipProgress(((currentPdfIndex + 1) / pdfInfoQueue.length) * 95);
-
-        // Move to next item
         setCurrentPdfIndex(idx => idx + 1);
     };
     

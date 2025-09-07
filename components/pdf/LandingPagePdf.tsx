@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GeneratedPlaybook, BusinessData } from '../../types';
 
@@ -26,7 +27,7 @@ const LandingPagePdf: React.FC<LandingPagePdfProps> = ({ playbook, businessData 
     const offer = playbook.offer1; 
 
     return (
-        <div className="p-10 bg-blue-100 font-sans text-gray-900" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", border: '10px solid #4a3323', backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23a0d1e3\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}>
+        <div data-pdf-page="true" className="p-10 bg-blue-100 font-sans text-gray-900" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", border: '10px solid #4a3323', backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23a0d1e3\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")', width: '800px', minHeight: '1131px' }}>
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-gray-800">
                 <div className="p-6 text-center border-b-4 border-gray-800">
                     <p className="text-xl font-bold uppercase tracking-wider text-yellow-600">Blueprint For</p>

@@ -8,7 +8,7 @@ import {
 
 // --- Storybook Theming Components ---
 const StorybookPage: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => (
-    <div className={`p-10 bg-[#FFFAF0] font-sans text-gray-800 break-after-page relative overflow-hidden border-8 border-yellow-300 rounded-3xl ${className}`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.1)' }}>
+    <div data-pdf-page="true" className={`p-10 bg-[#FFFAF0] font-sans text-gray-800 break-after-page relative overflow-hidden border-8 border-yellow-300 rounded-3xl ${className}`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.1)' }}>
         <div className="absolute top-8 left-8 text-5xl animate-pulse">☀️</div>
         <div className="absolute top-20 right-10 text-6xl text-white opacity-80">☁️</div>
         <div className="absolute top-40 right-40 text-4xl text-white opacity-60">☁️</div>

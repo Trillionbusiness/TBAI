@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BusinessData, GeneratedPlaybook } from '../../types';
 
@@ -26,7 +27,7 @@ interface ZipGuidePdfProps {
 
 const ZipGuidePdf: React.FC<ZipGuidePdfProps> = ({ businessData, playbook }) => {
     return (
-        <div className="p-12 bg-[#fdf8e1] font-sans text-yellow-900 border-8 border-yellow-500" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', height: '1131px', backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAADhJREFUKFNjZGBgYGBgZgABIgZCCRgZGRkggGIYGBhGFeBZGGCgmA8HwQxTDMgYhVAQAKZELBdbvovBAAAAAElFTkSuQmCC")' }}>
+        <div data-pdf-page="true" className="p-12 bg-[#fdf8e1] font-sans text-yellow-900 border-8 border-yellow-500" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', height: '1131px', backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAADhJREFUKFNjZGBgYGBgZgABIgZCCRgZGRkggGIYGBhGFeBZGGCgmA8HwQxTDMgYhVAQAKZELBdbvovBAAAAAElFTkSuQmCC")' }}>
             <header className="text-center mb-12 pb-6 border-b-8 border-dashed border-yellow-600">
                  <div className="text-9xl mb-4">
                     💎

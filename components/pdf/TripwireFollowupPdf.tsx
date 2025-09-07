@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { GeneratedDownsell, GeneratedOffer } from '../../types';
 
 // --- Storybook Theming Components ---
 const StorybookPage: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => (
-    <div className={`p-10 bg-[#fdf8e1] font-sans text-gray-800 break-after-page relative overflow-hidden border-8 border-yellow-500 rounded-3xl ${className}`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)' }}>
+    <div data-pdf-page="true" className={`p-10 bg-[#fdf8e1] font-sans text-gray-800 break-after-page relative overflow-hidden border-8 border-yellow-500 rounded-3xl ${className}`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)' }}>
         <div className="absolute top-8 left-8 text-5xl">☀️</div>
         <div className="relative z-10">{children}</div>
     </div>
