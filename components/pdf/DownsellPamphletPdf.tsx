@@ -1,64 +1,57 @@
 import React from 'react';
 import { GeneratedDownsell } from '../../types';
 
-// --- Reusable PDF Components ---
-const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-4xl font-black text-gray-900 tracking-tight">{children}</h1>;
-const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-lg text-gray-600 mt-2">{children}</p>;
-const P: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => <p className={`text-base text-gray-700 leading-relaxed my-3 ${className || ''}`}>{children}</p>;
-
 const DownsellPamphletPdf: React.FC<{ downsell: GeneratedDownsell }> = ({ downsell }) => {
     if (!downsell?.offer) {
         return <div className="p-8 bg-white font-sans">Could not load offer information.</div>;
     }
 
     return (
-        <div className="p-12 bg-white font-sans text-gray-900" style={{ pageBreakAfter: 'always' }}>
-            <div className="grid grid-cols-3 gap-10">
-                {/* Left Column */}
-                <div className="col-span-1 pr-6 border-r-2 border-gray-200">
-                    <p className="text-blue-500 font-bold uppercase tracking-widest">A Special Invitation</p>
-                    <Title>{downsell.offer.name}</Title>
-                    <div className="mt-8 text-right">
-                        <p className="text-md text-gray-600">Total Value:</p>
-                        <p className="text-3xl font-bold text-red-500 line-through">{downsell.offer.totalValue}</p>
-                        <p className="text-lg text-gray-800 mt-4">Your Price Today:</p>
-                        <p className="text-6xl font-black text-blue-600">{downsell.offer.price}</p>
-                    </div>
+        <div className="p-10 bg-blue-100 font-sans text-gray-900 border-8 border-yellow-400 rounded-3xl relative overflow-hidden" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', height: '1131px', boxShadow: '0 0 30px rgba(0,0,0,0.1) inset' }}>
+            {/* Decorative elements */}
+            <div className="absolute top-10 left-10 text-5xl transform -rotate-12">🎉</div>
+            <div className="absolute top-20 right-10 text-6xl transform rotate-12">🎈</div>
+            <div className="absolute bottom-10 left-20 text-5xl transform rotate-6">🥳</div>
+            <div className="absolute bottom-20 right-20 text-6xl transform -rotate-6">🎁</div>
 
-                    <div className="mt-10 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-                        <h4 className="text-lg font-bold text-blue-800">Our Simple Promise</h4>
-                        <p className="italic text-gray-700 mt-2 text-sm">"{downsell.offer.guarantee}"</p>
-                    </div>
+            <div className="h-full flex flex-col items-center justify-center text-center">
+
+                <p className="text-2xl font-bold text-blue-500">You're Invited To...</p>
+                <h1 className="text-7xl font-black text-blue-800 tracking-tighter mt-4">{downsell.offer.name}!</h1>
+                
+                <div className="my-8 p-6 bg-white rounded-2xl shadow-xl border-4 border-dashed border-blue-300">
+                    <p className="text-3xl text-gray-700 italic">"{downsell.offer.promise}"</p>
                 </div>
 
-                {/* Right Column */}
-                <div className="col-span-2">
-                    <Subtitle>"{downsell.offer.promise}"</Subtitle>
-
-                    <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                        <h3 className="font-bold text-gray-800">Why We Made This For You</h3>
-                        <P className="text-sm">{downsell.rationale}</P>
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-gray-800 mt-8 mb-4 border-b-2 border-yellow-400 pb-2">Here's Exactly What You Get:</h3>
-                    <div className="space-y-3">
-                        {downsell.offer.stack.map((item, index) => (
-                            <div key={index} className="flex items-start">
-                                <span className="text-2xl text-green-500 mr-3">✓</span>
-                                <div>
-                                    <p className="font-bold text-gray-800">{item.solution}</p>
-                                    <p className="text-gray-600 text-xs">
-                                        <strong className="font-semibold">Solves the problem of:</strong> {item.problem}
-                                    </p>
+                <div className="grid grid-cols-2 gap-6 items-center w-full max-w-3xl">
+                    {/* Left side: What you get */}
+                    <div className="text-left bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 className="text-2xl font-bold text-green-700 mb-4">Here are your party favors:</h3>
+                        <div className="space-y-3">
+                            {downsell.offer.stack.map((item, index) => (
+                                <div key={index} className="flex items-start">
+                                    <span className="text-2xl text-green-500 mr-3">⭐</span>
+                                    <div>
+                                        <p className="font-bold text-gray-800">{item.solution}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                    <div className="mt-10 text-center p-6 bg-green-500 text-white rounded-lg">
-                         <h3 className="text-2xl font-black">Ready to Get Started?</h3>
-                         <p className="mt-2">Claim this special offer and get your first quick win!</p>
+                    {/* Right side: Price */}
+                    <div className="text-center">
+                        <p className="text-xl text-gray-600">All this fun is worth:</p>
+                        <p className="text-4xl font-bold text-red-500 line-through">{downsell.offer.totalValue}</p>
+                        <p className="text-2xl text-gray-800 mt-6">But your ticket is only:</p>
+                        <p className="text-8xl font-black text-blue-600 animate-bounce">{downsell.offer.price}</p>
                     </div>
                 </div>
+
+                 <div className="mt-10 p-4 bg-yellow-100 border-2 border-dashed border-yellow-400 rounded-xl text-center w-full max-w-3xl">
+                    <p className="font-bold text-xl text-yellow-800">Our Pinky Promise!</p>
+                    <p className="italic text-yellow-700">"{downsell.offer.guarantee}"</p>
+                </div>
+
             </div>
         </div>
     );

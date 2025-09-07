@@ -14,6 +14,7 @@ import SalesFunnel from './SalesFunnel';
 import KpiDashboard from './KpiDashboard';
 import SalesSystem from './SalesSystem';
 import PurchasePlan from './PurchasePlan';
+import VideoOverview from './VideoOverview';
 
 interface FullPlaybookProps {
     playbook: GeneratedPlaybook;
@@ -34,6 +35,10 @@ interface FullPlaybookProps {
     onSaveKpiEntry: (entry: KpiEntry) => void;
     onGenerateDebrief: () => void;
     isGeneratingDebrief: boolean;
+    onGenerateVideo: () => void;
+    isGeneratingVideo: boolean;
+    videoGenerationStatus: string;
+    videoGenerationProgress: number;
 }
 
 interface PlaybookStepProps {
@@ -113,6 +118,10 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
     onSaveKpiEntry,
     onGenerateDebrief,
     isGeneratingDebrief,
+    onGenerateVideo,
+    isGeneratingVideo,
+    videoGenerationStatus,
+    videoGenerationProgress,
 }) => {
   const [openStep, setOpenStep] = useState<number | null>(1);
 
@@ -194,6 +203,14 @@ const FullPlaybook: React.FC<FullPlaybookProps> = ({
           {step.component}
         </PlaybookStep>
       ))}
+      {!isStatic && (
+          <VideoOverview 
+            onGenerate={onGenerateVideo}
+            isLoading={isGeneratingVideo}
+            status={videoGenerationStatus}
+            progress={videoGenerationProgress}
+          />
+      )}
       {!isStatic && (
           <PurchasePlan 
             onDownloadZip={onDownloadZip}

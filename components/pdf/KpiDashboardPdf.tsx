@@ -1,68 +1,74 @@
 import React from 'react';
 import { GeneratedKpiDashboard, Kpi } from '../../types';
 
-// --- Reusable PDF Components ---
-const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-4xl font-black text-gray-900 tracking-tight">{children}</h1>;
-const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-lg text-gray-600 mt-2">{children}</p>;
-const P: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => <p className={`text-base text-gray-700 leading-relaxed ${className || ''}`}>{children}</p>;
+// --- Storybook Theming Components ---
+const StorybookPage: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => (
+    <div className={`p-10 bg-[#FFFAF0] font-sans text-gray-800 break-after-page relative overflow-hidden border-8 border-green-300 rounded-3xl ${className}`} style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.1)' }}>
+        <div className="absolute top-8 left-8 text-5xl">☀️</div>
+        <div className="relative z-10">{children}</div>
+    </div>
+);
+
+const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-6xl font-black text-green-800 tracking-tighter text-center">{children}</h1>;
+const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-2xl text-green-600 mt-4 text-center">{children}</p>;
+const P: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => <p className={`text-lg text-gray-700 leading-relaxed ${className || ''}`}>{children}</p>;
 
 // --- PDF Specific Components ---
 
-const KpiCard: React.FC<{ kpi: Kpi }> = ({ kpi }) => {
+const LandmarkCard: React.FC<{ kpi: Kpi }> = ({ kpi }) => {
     const perspectiveStyles = {
-        Financial: { color: 'green', icon: '💰' },
+        Financial: { color: 'yellow', icon: '💰' },
         Customer: { color: 'blue', icon: '❤️' },
         Operational: { color: 'purple', icon: '⚙️' },
         Marketing: { color: 'pink', icon: '📢' },
     };
-    const style = perspectiveStyles[kpi.perspective] || { color: 'gray', icon: '📊' };
+    const style = perspectiveStyles[kpi.perspective] || { color: 'gray', icon: '📍' };
     const borderColor = `border-${style.color}-400`;
     const bgColor = `bg-${style.color}-50`;
     const textColor = `text-${style.color}-800`;
 
     return (
-        <div className={`p-6 bg-white rounded-lg border-t-8 ${borderColor} shadow-xl mb-6 break-inside-avoid flex flex-col`}>
+        <div className={`p-6 bg-white rounded-2xl border-t-8 ${borderColor} shadow-2xl mb-6 break-inside-avoid flex flex-col transform hover:scale-105 transition-transform duration-300`}>
             <div className="flex justify-between items-start">
                 <div>
-                     <p className={`font-bold text-sm uppercase ${textColor}`}>{kpi.perspective}</p>
-                     <h4 className="text-2xl font-bold text-gray-800">{kpi.name}</h4>
+                     <p className={`font-bold text-sm uppercase ${textColor}`}>{kpi.perspective} Landmark</p>
+                     <h4 className="text-3xl font-bold text-gray-800">{kpi.name}</h4>
                 </div>
-                <span className="text-4xl">{style.icon}</span>
+                <span className="text-5xl">{style.icon}</span>
             </div>
             
-            <P className="mt-2 text-sm flex-grow">{kpi.description}</P>
+            <P className="mt-2 text-base flex-grow">{kpi.description}</P>
             
-            <div className={`mt-4 p-3 ${bgColor} rounded-md`}>
-                 <p className={`font-bold text-sm ${textColor}`}>Why it matters for you:</p>
-                 <P className="italic text-sm">{kpi.importance}</P>
+            <div className={`mt-4 p-4 ${bgColor} rounded-xl`}>
+                 <p className={`font-bold text-base ${textColor}`}>Why this spot is important:</p>
+                 <P className="italic text-base">{kpi.importance}</P>
             </div>
 
-            <div className="mt-4 p-3 bg-gray-100 rounded-md">
-                <p className="font-bold text-sm text-gray-600">Formula:</p>
-                <P className="font-mono text-sm">{kpi.formula}</P>
+            <div className="mt-4 p-3 bg-gray-100 rounded-xl">
+                <p className="font-bold text-sm text-gray-600">How to count your steps:</p>
+                <P className="font-mono text-base">{kpi.formula}</P>
             </div>
-            
         </div>
     );
 };
 
 const KpiDashboardPdf: React.FC<{ kpiDashboard: GeneratedKpiDashboard }> = ({ kpiDashboard }) => {
   return (
-    <div className="p-12 bg-gray-50 font-sans text-gray-900" style={{ pageBreakAfter: 'always' }}>
-        <header className="text-center mb-10 pb-4 border-b-4 border-yellow-400">
-            <Title>{kpiDashboard.title}</Title>
+    <StorybookPage>
+        <header className="text-center mb-10 pb-4 border-b-8 border-dashed border-green-400">
+            <div className="text-8xl mb-4">🧭</div>
+            <Title>Your Adventure Map & Compass</Title>
             <Subtitle>"{kpiDashboard.corePrinciple}"</Subtitle>
         </header>
 
+        <P className="text-center text-xl mb-8">These are the important landmarks on your map. Visit them every week to make sure you're going in the right direction!</P>
+
         <main className="grid grid-cols-2 gap-8">
             {kpiDashboard.kpis.map((kpi, index) => (
-                <KpiCard key={index} kpi={kpi} />
+                <LandmarkCard key={index} kpi={kpi} />
             ))}
         </main>
-         <footer className="mt-12 pt-6 border-t-2 border-gray-200 text-xs text-gray-500 text-center">
-            <p>Track these numbers weekly. What gets measured gets managed.</p>
-        </footer>
-    </div>
+    </StorybookPage>
   );
 };
 

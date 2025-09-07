@@ -37,7 +37,7 @@ const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ videoUrl, onClose }
         <div className="mt-6 flex justify-center">
              <a
                 href={videoUrl}
-                download="hormozi_ai_video_overview.mp4"
+                download="trillion_business_video_overview.mp4"
                 className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-colors"
              >
                 Download Video

@@ -3,16 +3,12 @@ import { OfferStackItem } from '../../types';
 import MarkdownRenderer from '../common/MarkdownRenderer';
 
 const PageLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="p-12 bg-white font-sans text-gray-800 relative overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', width: '800px', minHeight: '1131px' }}>
-         <div style={{
-            position: 'absolute',
-            top: '-60px',
-            left: '-60px',
-            width: '200px',
-            height: '200px',
-            backgroundColor: 'rgba(130, 213, 227, 0.7)',
-            clipPath: 'polygon(0 0, 100% 0, 0 100%)'
-        }}></div>
+    <div className="p-12 bg-[#fdf8e1] font-sans text-gray-800 relative overflow-hidden" style={{ fontFamily: "'Comic Sans MS', cursive, sans-serif", width: '800px', minHeight: '1131px', border: '10px solid #c4a35a', borderStyle: 'double' }}>
+         <div style={{ position: 'absolute', top: 10, left: 10, right: 10, bottom: 10, border: '2px solid #e0cda8' }}></div>
+        <div className="absolute top-8 left-8 text-3xl">✨</div>
+        <div className="absolute top-8 right-8 text-3xl">✨</div>
+        <div className="absolute bottom-8 left-8 text-3xl">✨</div>
+        <div className="absolute bottom-8 right-8 text-3xl">✨</div>
         <div className="relative z-10 flex flex-col h-full" style={{minHeight: '1035px'}}>
             {children}
         </div>
@@ -21,11 +17,9 @@ const PageLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 
 const AssetHeader: React.FC<{ type: string; title: string }> = ({ type, title }) => (
-    <header className="mb-8 pb-4 border-b-2 border-gray-200">
-        <div className="flex justify-between items-center text-sm text-gray-500">
-            <p className="font-bold uppercase tracking-wider capitalize text-[#147273]">{type}</p>
-            <p className="font-semibold">{title}</p>
-        </div>
+    <header className="mb-8 pb-4 border-b-2 border-dashed border-yellow-700 text-center">
+        <p className="font-bold uppercase tracking-wider capitalize text-yellow-800">{type}</p>
+        <p className="font-semibold text-sm text-gray-600">From the Great Book of "{title}"</p>
     </header>
 );
 
@@ -34,14 +28,13 @@ const AssetPdf: React.FC<{ asset: NonNullable<OfferStackItem['asset']>; offerNam
         <PageLayout>
             <AssetHeader type={asset.type} title={offerName} />
             <main className="flex-grow">
-                <h1 className="text-4xl font-black text-[#147273] mb-6 tracking-tight">{asset.name}</h1>
-                <div className="prose prose-lg max-w-none text-gray-800">
+                <h1 className="text-5xl font-black text-purple-800 mb-6 tracking-tight text-center">{asset.name}</h1>
+                <div className="prose prose-lg max-w-none text-gray-800 text-lg leading-relaxed">
                     <MarkdownRenderer content={asset.content} theme="light" />
                 </div>
             </main>
-            <footer className="mt-12 pt-4 border-t border-gray-200 text-xs text-gray-500 text-left">
-                <p className="font-bold">Trillion Business</p>
-                <p>Your AI-Powered Business Plan</p>
+            <footer className="mt-12 pt-4 border-t border-dashed border-yellow-700 text-xs text-yellow-900 text-center">
+                <p className="font-bold">A Secret Spell from Trillion Business</p>
             </footer>
         </PageLayout>
     );

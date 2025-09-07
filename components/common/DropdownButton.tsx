@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import CircularProgress from './CircularProgress';
 
@@ -69,11 +70,9 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
-            {/* FIX: Refactored map to use an if/else block to ensure proper type narrowing for the DropdownOption discriminated union. */}
+            {/* FIX: Use a more robust type guard ('in' operator) to ensure proper type narrowing for the DropdownOption discriminated union. */}
             {options.map((option, index) => {
-              if (option.separator) {
-                return <div key={`sep-${index}`} className="border-t my-1 mx-2" style={{ borderColor: 'var(--border-color)' }} />;
-              } else {
+              if ('label' in option) {
                 return (
                   <div key={option.label} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
                     <button
@@ -93,6 +92,8 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
                     )}
                   </div>
                 );
+              } else {
+                return <div key={`sep-${index}`} className="border-t my-1 mx-2" style={{ borderColor: 'var(--border-color)' }} />;
               }
             })}
           </div>

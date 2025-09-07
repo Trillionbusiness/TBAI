@@ -62,7 +62,6 @@ const InputField: React.FC<{
                 onChange={onChange}
                 placeholder={placeholder}
                 className={`w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition ${onAutofill ? 'pr-10' : ''}`}
-                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                 style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 required={required}
             />
@@ -103,7 +102,6 @@ const SelectField: React.FC<{ id: keyof BusinessData, label: string, value: stri
             onChange={onChange}
             required
             className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
-            // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
             style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
         >
             {children}
@@ -125,7 +123,6 @@ const RadioGroupField: React.FC<{ id: keyof BusinessData, label: string, value: 
                         onChange={onChange}
                         required
                         className="h-4 w-4 bg-gray-100 border-gray-300 focus:ring-offset-gray-50"
-                        // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                         style={{color: 'var(--primary-color)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                     />
                     <span>{option.label}</span>
@@ -175,6 +172,7 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
   const [autofillDescription, setAutofillDescription] = useState('');
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [autofillError, setAutofillError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -192,6 +190,44 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const requiredFields: { key: keyof BusinessData; label: string }[] = [
+        { key: 'businessType', label: 'Business Type or Idea' },
+        { key: 'biggestChallenge', label: 'Biggest Challenge or Question' },
+        { key: 'location', label: 'City & State/Province' },
+        { key: 'country', label: 'Country' },
+        { key: 'currency', label: 'Currency' },
+        { key: 'employees', label: 'Current or Planned Employees' },
+        { key: 'monthlyRevenue', label: 'Current Monthly Revenue' },
+        { key: 'marketingMethods', label: 'Current or Planned Marketing' },
+        { key: 'coreOffer', label: 'Main Offer & Price (or idea)' },
+        { key: 'targetClient', label: 'Your Ideal Customer' },
+    ];
+    
+    for (const field of requiredFields) {
+        const value = formData[field.key];
+        if (!value || typeof value === 'string' && !value.trim()) {
+            setFormError(`Please fill out the "${field.label}" field.`);
+            const element = document.getElementById(field.key);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.focus();
+            }
+            return;
+        }
+    }
+    
+    if (formData.businessStage === 'new' && !formData.fundingStatus) {
+        setFormError('Please select a funding status for your new business.');
+        const element = document.getElementsByName('fundingStatus')[0];
+         if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.focus();
+        }
+        return;
+    }
+
+    setFormError(null);
     onSubmit(formData);
   };
 
@@ -270,7 +306,6 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm focus:ring-2"
-                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                 style={{ backgroundColor: 'var(--bg-muted)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
             >
                 {businessCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
@@ -306,7 +341,6 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
                     onChange={(e) => setAutofillUrl(e.target.value)}
                     placeholder="https://example.com"
                     className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
-                    // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                     style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 />
             </div>
@@ -319,7 +353,6 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
                     onChange={(e) => setAutofillDescription(e.target.value)}
                     placeholder="e.g., 'We're a new SaaS company building a project management tool for small agencies. We're bootstrapping and want to find our first 10 customers.'"
                     className="w-full bg-white border border-gray-300 rounded-md py-2 px-3 focus:ring-2 transition"
-                    // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                     style={{backgroundColor: 'var(--bg-light)', borderColor: 'var(--border-color)', color: 'var(--text-dark)', '--tw-ring-color': 'var(--primary-color)'} as React.CSSProperties}
                 />
             </div>
@@ -415,11 +448,16 @@ const Step1Form: React.FC<Step1FormProps> = ({ onSubmit }) => {
             </div>
         </div>
         
+        {formError && (
+            <div className="my-4 text-center p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+                {formError}
+            </div>
+        )}
+        
         <div className="pt-4">
             <button 
                 type="submit" 
                 className="w-full text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                // FIX: Cast style object to React.CSSProperties to allow custom CSS properties for Tailwind ring color.
                 style={{backgroundColor: 'var(--primary-color)', '--tw-ring-color': 'var(--primary-color)', '--tw-ring-offset-color': 'var(--bg-light)'} as React.CSSProperties}
             >
                 Make My Plan!

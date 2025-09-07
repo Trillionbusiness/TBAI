@@ -36,7 +36,8 @@ const AllPdfs: React.FC<AllPdfsProps> = ({ playbook, businessData, type, assetBu
         case 'full': return <FullPlaybookPdf playbook={playbook} />;
         case 'zip-guide': return <ZipGuidePdf businessData={businessData} playbook={playbook} />;
         case 'money-models-guide': return <MoneyModelsGuidePdf />;
-        case 'concepts-guide': return <ConceptsGuidePdf playbook={playbook} businessData={businessData} />;
+        // FIX: The ConceptsGuidePdf component is static and does not accept props.
+        case 'concepts-guide': return <ConceptsGuidePdf />;
         case 'kpi-dashboard': return <KpiDashboardPdf kpiDashboard={playbook.kpiDashboard} />;
         case 'landing-page': return <LandingPagePdf playbook={playbook} businessData={businessData} />;
         case 'offer-presentation': return <OfferPresentationPdf playbook={playbook} />;
