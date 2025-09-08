@@ -1,9 +1,9 @@
 
-
 import React, { useState, useRef, useEffect } from 'react';
 import CircularProgress from './CircularProgress';
 
-type DropdownOption = 
+// FIX: Export DropdownOption type to be used in other files.
+export type DropdownOption = 
   | { label: string; onClick: () => void; onPreview: (() => void) | null; special?: boolean; separator?: never; }
   | { separator: true; label?: never; onClick?: never; onPreview?: never; special?: never; };
 
@@ -70,11 +70,12 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
-            {/* FIX: Use a more robust type guard ('in' operator) to ensure proper type narrowing for the DropdownOption discriminated union. */}
+            {/* FIX: Use a more robust type guard to discriminate union types and a safer key. */}
             {options.map((option, index) => {
+              // FIX: Use 'label' in option as a more robust type guard to fix type inference issues.
               if ('label' in option) {
                 return (
-                  <div key={option.label} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
+                  <div key={option.label || index} className={`flex justify-between items-center px-2 py-1 text-sm group ${option.special ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}>
                     <button
                       onClick={() => handleOptionClick(option.onClick)}
                       className={`w-full text-left block px-2 py-2 rounded-md transition-colors ${option.special ? 'font-bold text-yellow-900 hover:bg-yellow-100' : 'text-gray-700 hover:bg-gray-100'}`}

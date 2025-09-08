@@ -14,7 +14,8 @@ import {
 import Step1Form from './components/Step1Form';
 import ProgressBar from './components/common/ProgressBar';
 import FullPlaybook from './components/FullPlaybook';
-import DropdownButton from './components/common/DropdownButton';
+// FIX: Import DropdownOption type to correctly type the options array.
+import DropdownButton, { DropdownOption } from './components/common/DropdownButton';
 import AllPdfs from './components/pdf/AllPdfs';
 import PdfPreviewModal from './components/pdf/PdfPreviewModal';
 import FullPlaybookHtml from './components/html/FullPlaybookHtml';
@@ -35,16 +36,22 @@ const sanitizeName = (name: string) => name.replace(/[\\/:*?"<>|]/g, '').replace
 const createPdfInfoQueue = (playbook: GeneratedPlaybook, businessData: BusinessData) => {
     const queue: {type: string, path: string, asset?: any, offer?: any}[] = [];
 
+    // Core Plan
     queue.push({ type: 'zip-guide', path: '00_START_HERE_Guide.pdf' });
     queue.push({ type: 'full', path: '01_Core_Plan/Full_Business_Playbook.pdf' });
     queue.push({ type: 'concepts-guide', path: '01_Core_Plan/Business_Concepts_Guide.pdf' });
     queue.push({ type: 'kpi-dashboard', path: '01_Core_Plan/Business_Scorecard_(KPIs).pdf' });
     queue.push({ type: 'offer-presentation', path: '01_Core_Plan/Offer_Presentation_Slides.pdf' });
+    
+    // Money Models
     queue.push({ type: 'cfa-model', path: '02_Money_Models/Your_Money_Making_Plan.pdf' });
+    
+    // Marketing Materials
     queue.push({ type: 'landing-page', path: '03_Marketing_Materials/High-Converting_Landing_Page.pdf' });
     queue.push({ type: 'downsell-pamphlet', path: '03_Marketing_Materials/Simple_Offer_Flyer.pdf' });
     queue.push({ type: 'tripwire-followup', path: '03_Marketing_Materials/Customer_Follow-Up_Note.pdf' });
 
+    // Asset Library
     const addOfferAssetsToQueue = (offer: GeneratedOffer, folder: string) => {
         queue.push({ type: 'asset-bundle', path: `${folder}/00_Full_Asset_Bundle.pdf`, offer: offer });
         offer.stack.forEach(item => {
@@ -58,6 +65,44 @@ const createPdfInfoQueue = (playbook: GeneratedPlaybook, businessData: BusinessD
     addOfferAssetsToQueue(playbook.offer2, `04_Asset_Library/${sanitizeName(playbook.offer2.name)}`);
     addOfferAssetsToQueue(playbook.downsell.offer, `04_Asset_Library/${sanitizeName(playbook.downsell.offer.name)}`);
     
+    // Business University Guides (21 total)
+    const buFolder = '05_Business_University';
+
+    // Pricing & Offer (2)
+    queue.push({ type: 'guide-pricing', path: `${buFolder}/01_Pricing_And_Offers/01_Pricing_Your_Treasure.pdf` });
+    queue.push({ type: 'guide-enhancing-offer', path: `${buFolder}/01_Pricing_And_Offers/02_Making_Your_Offer_Sparkle.pdf` });
+    
+    // Execution (1)
+    queue.push({ type: 'guide-execution-100k', path: `${buFolder}/02_Execution/01_Your_First_100k_Adventure.pdf` });
+    
+    // Lead Generation (6)
+    queue.push({ type: 'guide-lead-magnets', path: `${buFolder}/03_Lead_Generation/01_Lead_Magnets_And_Offers.pdf` });
+    queue.push({ type: 'guide-warm-outreach', path: `${buFolder}/03_Lead_Generation/02_Warm_Outreach.pdf` });
+    queue.push({ type: 'guide-content-marketing', path: `${buFolder}/03_Lead_Generation/03_Content_Marketing.pdf` });
+    queue.push({ type: 'guide-cold-outreach', path: `${buFolder}/03_Lead_Generation/04_Cold_Outreach.pdf` });
+    queue.push({ type: 'guide-paid-ads', path: `${buFolder}/03_Lead_Generation/05_Paid_Advertising.pdf` });
+    queue.push({ type: 'guide-scaling-what-works', path: `${buFolder}/03_Lead_Generation/06_Scaling_What_Works.pdf` });
+    
+    // Leverage (4)
+    queue.push({ type: 'guide-referrals', path: `${buFolder}/04_Leverage/01_Customer_Referrals.pdf` });
+    queue.push({ type: 'guide-employees', path: `${buFolder}/04_Leverage/02_Hiring_Employees.pdf` });
+    queue.push({ type: 'guide-agencies', path: `${buFolder}/04_Leverage/03_Working_With_Agencies.pdf` });
+    queue.push({ type: 'guide-affiliates', path: `${buFolder}/04_Leverage/04_Affiliates_And_Partners.pdf` });
+
+    // Advanced Strategy (2)
+    queue.push({ type: 'guide-in-person-ads', path: `${buFolder}/05_Advanced_Strategy/01_In-Person_Advertising.pdf` });
+    queue.push({ type: 'guide-business-roadmap', path: `${buFolder}/05_Advanced_Strategy/02_The_Business_Roadmap.pdf` });
+    
+    // Money Models (5)
+    queue.push({ type: 'guide-money-models-intro', path: `${buFolder}/06_Money_Models/01_Intro_To_Money_Models.pdf` });
+    queue.push({ type: 'guide-attraction-offers', path: `${buFolder}/06_Money_Models/02_Attraction_Offers.pdf` });
+    queue.push({ type: 'guide-upsell-offers', path: `${buFolder}/06_Money_Models/03_Upsell_Offers.pdf` });
+    queue.push({ type: 'guide-downsell-offers', path: `${buFolder}/06_Money_Models/04_Downsell_Offers.pdf` });
+    queue.push({ type: 'guide-continuity-offers', path: `${buFolder}/06_Money_Models/05_Continuity_Offers.pdf` });
+
+    // Scaling (1)
+    queue.push({ type: 'guide-scaling-stages', path: `${buFolder}/07_Scaling/01_The_Scaling_Roadmap.pdf` });
+
     return queue;
 };
 
@@ -506,6 +551,61 @@ const App: React.FC = () => {
   const anyLoading = isGeneratingPdf || isZipping || isGeneratingVideo;
   const currentProgress = isZipping ? zipProgress : (isGeneratingPdf ? pdfProgress : videoGenerationProgress);
 
+  // FIX: Explicitly type businessUniversityOptions to prevent type inference issues with separator objects.
+  const businessUniversityOptions: DropdownOption[] = [
+      { separator: true },
+      { label: '--- 💎 Pricing & Offers ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: Pricing Your Treasure', onClick: () => handleDownloadPdf('guide-pricing'), onPreview: () => handlePreviewPdf({type: 'guide-pricing'}) },
+      { label: 'Guide: Making Your Offer Sparkle', onClick: () => handleDownloadPdf('guide-enhancing-offer'), onPreview: () => handlePreviewPdf({type: 'guide-enhancing-offer'}) },
+      { separator: true },
+      { label: '--- 🏃‍♂️ Execution ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: Your First $100k', onClick: () => handleDownloadPdf('guide-execution-100k'), onPreview: () => handlePreviewPdf({type: 'guide-execution-100k'}) },
+      { separator: true },
+      { label: '--- 🎣 Lead Generation ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: Lead Magnets', onClick: () => handleDownloadPdf('guide-lead-magnets'), onPreview: () => handlePreviewPdf({type: 'guide-lead-magnets'}) },
+      { label: 'Guide: Warm Outreach', onClick: () => handleDownloadPdf('guide-warm-outreach'), onPreview: () => handlePreviewPdf({type: 'guide-warm-outreach'}) },
+      { label: 'Guide: Content Marketing', onClick: () => handleDownloadPdf('guide-content-marketing'), onPreview: () => handlePreviewPdf({type: 'guide-content-marketing'}) },
+      { label: 'Guide: Cold Outreach', onClick: () => handleDownloadPdf('guide-cold-outreach'), onPreview: () => handlePreviewPdf({type: 'guide-cold-outreach'}) },
+      { label: 'Guide: Paid Ads', onClick: () => handleDownloadPdf('guide-paid-ads'), onPreview: () => handlePreviewPdf({type: 'guide-paid-ads'}) },
+      { label: 'Guide: Scaling What Works', onClick: () => handleDownloadPdf('guide-scaling-what-works'), onPreview: () => handlePreviewPdf({type: 'guide-scaling-what-works'}) },
+      { separator: true },
+      { label: '--- 🤝 Leverage ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: Customer Referrals', onClick: () => handleDownloadPdf('guide-referrals'), onPreview: () => handlePreviewPdf({type: 'guide-referrals'}) },
+      { label: 'Guide: Hiring Employees', onClick: () => handleDownloadPdf('guide-employees'), onPreview: () => handlePreviewPdf({type: 'guide-employees'}) },
+      { label: 'Guide: Using Agencies', onClick: () => handleDownloadPdf('guide-agencies'), onPreview: () => handlePreviewPdf({type: 'guide-agencies'}) },
+      { label: 'Guide: Affiliates & Partners', onClick: () => handleDownloadPdf('guide-affiliates'), onPreview: () => handlePreviewPdf({type: 'guide-affiliates'}) },
+      { separator: true },
+      { label: '--- 🗺️ Advanced Strategy ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: In-Person Advertising', onClick: () => handleDownloadPdf('guide-in-person-ads'), onPreview: () => handlePreviewPdf({type: 'guide-in-person-ads'}) },
+      { label: 'Guide: Your Business Roadmap', onClick: () => handleDownloadPdf('guide-business-roadmap'), onPreview: () => handlePreviewPdf({type: 'guide-business-roadmap'}) },
+      { separator: true },
+      { label: '--- 💰 Money Models ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: Intro to Money Models', onClick: () => handleDownloadPdf('guide-money-models-intro'), onPreview: () => handlePreviewPdf({type: 'guide-money-models-intro'}) },
+      { label: 'Guide: Attraction Offers', onClick: () => handleDownloadPdf('guide-attraction-offers'), onPreview: () => handlePreviewPdf({type: 'guide-attraction-offers'}) },
+      { label: 'Guide: Upsell Offers', onClick: () => handleDownloadPdf('guide-upsell-offers'), onPreview: () => handlePreviewPdf({type: 'guide-upsell-offers'}) },
+      { label: 'Guide: Downsell Offers', onClick: () => handleDownloadPdf('guide-downsell-offers'), onPreview: () => handlePreviewPdf({type: 'guide-downsell-offers'}) },
+      { label: 'Guide: Continuity Offers', onClick: () => handleDownloadPdf('guide-continuity-offers'), onPreview: () => handlePreviewPdf({type: 'guide-continuity-offers'}) },
+      { separator: true },
+      { label: '--- 👑 Scaling ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Guide: The Scaling Roadmap', onClick: () => handleDownloadPdf('guide-scaling-stages'), onPreview: () => handlePreviewPdf({type: 'guide-scaling-stages'}) },
+  ];
+
+  // FIX: Created a typed variable for dropdown options to fix type errors.
+  const dropdownOptions: DropdownOption[] = [
+      { label: 'Generate Video Overview', onClick: handleGenerateVideo, onPreview: null, special: true },
+      { separator: true },
+      { label: '---  Core Documents ---', onClick: ()=>{}, onPreview: null },
+      { label: 'Full Playbook (PDF)', onClick: () => handleDownloadPdf('full'), onPreview: () => handlePreviewPdf({type: 'full'}) },
+      { label: 'Business Scorecard (KPIs)', onClick: () => handleDownloadPdf('kpi-dashboard'), onPreview: () => handlePreviewPdf({type: 'kpi-dashboard'}) },
+      { label: 'Offer Presentation Slides', onClick: () => handleDownloadPdf('offer-presentation'), onPreview: () => handlePreviewPdf({type: 'offer-presentation'}) },
+      { label: 'Money Model Plan', onClick: () => handleDownloadPdf('cfa-model'), onPreview: () => handlePreviewPdf({type: 'cfa-model'}) },
+      ...businessUniversityOptions,
+      { separator: true },
+      { label: 'Offline Interactive Plan (HTML)', onClick: handleDownloadOfflineApp, onPreview: null },
+      { separator: true },
+      { label: 'Buy Complete Plan Kit ($99 .zip)', onClick: handleDownloadZip, onPreview: null, special: true },
+  ];
+
   return (
     <div className="min-h-screen">
        <header className="bg-white shadow-sm sticky top-0 z-20">
@@ -523,18 +623,7 @@ const App: React.FC = () => {
                       label="Download Options" 
                       isLoading={anyLoading}
                       progress={currentProgress}
-                      options={[
-                          { label: 'Generate Video Overview', onClick: handleGenerateVideo, onPreview: null, special: true },
-                          { separator: true },
-                          { label: 'Full Playbook (PDF)', onClick: () => handleDownloadPdf('full'), onPreview: () => handlePreviewPdf({type: 'full'}) },
-                          { label: 'Business Scorecard (KPIs)', onClick: () => handleDownloadPdf('kpi-dashboard'), onPreview: () => handlePreviewPdf({type: 'kpi-dashboard'}) },
-                          { label: 'Offer Presentation Slides', onClick: () => handleDownloadPdf('offer-presentation'), onPreview: () => handlePreviewPdf({type: 'offer-presentation'}) },
-                          { label: 'Money Model Plan', onClick: () => handleDownloadPdf('cfa-model'), onPreview: () => handlePreviewPdf({type: 'cfa-model'}) },
-                          { separator: true },
-                          { label: 'Offline Interactive Plan (HTML)', onClick: handleDownloadOfflineApp, onPreview: null },
-                          { separator: true },
-                          { label: 'Buy Complete Plan Kit ($99 .zip)', onClick: handleDownloadZip, onPreview: null, special: true },
-                      ]}
+                      options={dropdownOptions}
                   />
               </div>
           </div>
