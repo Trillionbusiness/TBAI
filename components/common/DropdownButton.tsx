@@ -69,7 +69,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, options, isLoadi
           aria-orientation="vertical"
           aria-labelledby="menu-button"
         >
-          <div className="py-1" role="none">
+          <div className="py-1 max-h-[70vh] overflow-y-auto" role="none">
             {/* FIX: Use a more robust type guard to discriminate union types and a safer key. */}
             {options.map((option, index) => {
               // FIX: Use 'label' in option as a more robust type guard to fix type inference issues.

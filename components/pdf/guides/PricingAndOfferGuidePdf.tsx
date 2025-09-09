@@ -3,26 +3,30 @@ import React from 'react';
 import { BusinessData, GeneratedPlaybook } from '../../../types';
 
 // --- Reusable Theming Components ---
-const GuidePage: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => (
-    <div data-pdf-page="true" className={`p-10 bg-white font-sans text-gray-800 break-after-page relative overflow-hidden border-t-8 border-yellow-400 ${className}`} style={{ fontFamily: "'Inter', sans-serif", width: '800px', minHeight: '1131px', boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }}>
-        <div className="absolute top-4 right-8 text-xs font-bold text-gray-400">BUSINESS UNIVERSITY WORKSHOP</div>
+const POGuidePage: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => (
+    <div data-pdf-page="true" className={`p-10 bg-white font-sans text-gray-800 break-after-page relative overflow-hidden border-t-8 border-gray-800 ${className}`} style={{ fontFamily: "'Inter', sans-serif", width: '800px', minHeight: '1131px', boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }}>
+        <div className="absolute top-4 right-8 text-xs font-bold text-gray-400">BUSINESS UNIVERSITY MASTERCLASS</div>
         <div className="relative z-10">{children}</div>
     </div>
 );
 
-const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-5xl font-black text-gray-800 tracking-tighter text-center">{children}</h1>;
-const Subtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-xl text-gray-500 mt-3 text-center">{children}</p>;
-const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <h2 className={`text-3xl font-bold text-gray-800 border-b-2 border-gray-200 pb-3 mb-6 mt-10 break-after-avoid`}>{children}</h2>;
-const P: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => <p className={`text-base text-gray-600 leading-relaxed my-3 ${className || ''}`}>{children}</p>;
-const WorksheetBox: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => (
-    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200 my-4">
-        <h3 className="font-bold text-lg text-yellow-700">{title}</h3>
-        <div className="mt-2">{children}</div>
+const POTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <h1 className="text-5xl font-black text-gray-800 tracking-tighter text-center">{children}</h1>;
+const POSubtitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <p className="text-xl text-gray-500 mt-3 text-center">{children}</p>;
+const POSectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => <h2 className={`text-3xl font-bold text-gray-800 border-b-2 border-gray-200 pb-3 mb-6 mt-10 break-after-avoid`}>{children}</h2>;
+const POP: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => <p className={`text-base text-gray-600 leading-relaxed my-3 ${className || ''}`}>{children}</p>;
+const POActionBox: React.FC<{ title: string, children: React.ReactNode, icon?: string }> = ({ title, children, icon }) => (
+    <div className={`p-6 bg-gray-50 rounded-lg border border-gray-200 my-4`}>
+        <h3 className={`font-bold text-lg text-gray-800 flex items-center`}>
+            {icon && <span className="mr-3 text-2xl">{icon}</span>}
+            {title}
+        </h3>
+        <div className="mt-3 text-sm text-gray-700">{children}</div>
     </div>
 );
-const BlankLines: React.FC<{lines: number}> = ({ lines }) => (
-    <div className="space-y-4 mt-2">
-        {[...Array(lines)].map((_, i) => <div key={i} className="h-px bg-gray-300 w-full" />)}
+const POScriptBox: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => (
+    <div className="p-4 bg-gray-800 rounded-lg text-white font-mono text-sm my-4">
+        <p className="font-bold text-yellow-400 mb-2">{`// ${title}`}</p>
+        <div className="whitespace-pre-wrap">{children}</div>
     </div>
 );
 
@@ -31,38 +35,65 @@ const BlankLines: React.FC<{lines: number}> = ({ lines }) => (
 
 const PricingGuide: React.FC<{ playbook: GeneratedPlaybook }> = ({ playbook }) => {
     const offer = playbook.offer1;
+    const basePrice = parseInt(offer.price.replace(/[^0-9]/g,''));
+
     return (
         <>
-            <GuidePage>
+            <POGuidePage>
                 <header className="text-center mb-12 pb-6">
-                    <p className="font-bold text-yellow-600">PRICING WORKSHOP</p>
-                    <Title>Pricing Your Treasure</Title>
-                    <Subtitle>A worksheet for calculating the perfect price for your offer: "{offer.name}"</Subtitle>
+                    <p className="font-bold text-yellow-600">PRICING MASTERCLASS</p>
+                    <POTitle>The Value Equation</POTitle>
+                    <POSubtitle>How to price your offer, "{offer.name}", based on the immense value it provides.</POSubtitle>
                 </header>
                 <main>
-                    <SectionTitle>Principle: Price on Value, Not Cost</SectionTitle>
-                    <P>The biggest mistake is pricing based on how much it costs you. The correct way is to price based on how much value the result is WORTH to your customer.</P>
-                    <P>If you solve a $100,000 problem, a $10,000 price is a fantastic deal. If you solve a $10 problem, a $5 price might be too expensive.</P>
+                    <POSectionTitle>Principle: Price on Value, Not Cost</POSectionTitle>
+                    <POP>The biggest mistake is pricing based on how much it costs you to deliver. The correct way is to price based on how much value the result is WORTH to your customer. You are not selling a service; you are selling a transformation.</POP>
                     
-                    <WorksheetBox title="Worksheet: Calculating Your Offer's Value">
-                        <P className="text-sm">Let's quantify the value of your offer, <strong>"{offer.name}"</strong>, for your target client: <strong>{playbook.diagnosis.yourRole}</strong>.</P>
-                        <div className="mt-4">
-                            <p className="font-semibold text-gray-700">1. The Cost of Doing Nothing:</p>
-                            <P className="text-sm">What is the financial, emotional, or time cost if your client DOESN'T solve their main problem ({playbook.diagnosis.constraints[0]})? Write it down.</P>
-                            <BlankLines lines={3} />
+                    <POActionBox title="The 10x Value Anchor" icon="⚓">
+                        <POP>A powerful rule of thumb is that the value of your offer should be at least 10 times its price. This makes the customer feel like they are getting an incredible deal.</POP>
+                        <div className="mt-2 p-4 bg-white rounded grid grid-cols-2 gap-4 text-center">
+                            <div><p className="text-xs font-bold text-gray-400">Total Value</p><p className="text-2xl font-bold text-gray-800">{offer.totalValue}</p></div>
+                             <div><p className="text-xs font-bold text-gray-400">Your Price</p><p className="text-2xl font-bold text-green-600">{offer.price}</p></div>
                         </div>
-                        <div className="mt-4">
-                            <p className="font-semibold text-gray-700">2. The Value of the Dream Outcome:</p>
-                            <P className="text-sm">Your offer promises: "{offer.promise}". What is that outcome worth to your client in money, time saved, or happiness?</P>
-                            <BlankLines lines={3} />
-                        </div>
-                    </WorksheetBox>
-                    <div className="p-6 bg-green-50 rounded-lg border-2 border-dashed border-green-300 shadow-sm my-4 text-center">
-                        <h3 className="font-bold text-2xl text-green-700">The 10x Rule: Your Price vs. Its Value</h3>
-                        <P className="text-green-800">Your total calculated value should be roughly 10 times your price. Your offer has a total listed value of <strong>{offer.totalValue}</strong> and a price of <strong>{offer.price}</strong>. This is a great starting point!</P>
-                    </div>
+                    </POActionBox>
                 </main>
-            </GuidePage>
+            </POGuidePage>
+            <POGuidePage>
+                 <main>
+                    <POSectionTitle>Advanced Strategy: Pricing Tiers</POSectionTitle>
+                    <POP>Offering tiers can increase your average order value by appealing to different types of buyers. Here is a generated 3-tier model for your offer.</POP>
+                    <div className="grid grid-cols-3 gap-4 text-xs">
+                        <div className="p-3 border rounded-lg">
+                            <h4 className="font-bold">STANDARD</h4>
+                            <p className="font-bold text-lg">{offer.price}</p>
+                            <ul className="list-disc pl-4 mt-2"><li>Core Offer</li></ul>
+                        </div>
+                        <div className="p-3 border-2 border-yellow-400 rounded-lg bg-yellow-50 relative">
+                             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold">POPULAR</div>
+                            <h4 className="font-bold">PRO</h4>
+                            <p className="font-bold text-lg">${basePrice * 1.5}</p>
+                            <ul className="list-disc pl-4 mt-2"><li>Core Offer</li><li>+ "Done-With-You" Onboarding Call</li></ul>
+                        </div>
+                         <div className="p-3 border rounded-lg">
+                            <h4 className="font-bold">PREMIUM</h4>
+                            <p className="font-bold text-lg">${basePrice * 3}</p>
+                            <ul className="list-disc pl-4 mt-2"><li>Core Offer</li><li>+ Onboarding Call</li><li>+ "Done-For-You" Implementation</li></ul>
+                        </div>
+                    </div>
+
+                    <POSectionTitle>Communicating Value: Your Script</POSectionTitle>
+                    <POP>You must be able to confidently explain your price. Here are scripts to use when a potential customer asks "How much is it?".</POP>
+                    <POScriptBox title="The Value Stack Script">
+                        <p>That's a great question. To be transparent, the full program is valued at over {offer.totalValue}. That includes [mention 2-3 top stack items, e.g., "{offer.stack[0].solution}" and "{offer.stack[1].solution}"].</p>
+                        <p className="mt-2">However, because you're [a good fit / signing up this week / etc.], the investment isn't {offer.totalValue}. It's only {offer.price}.</p>
+                    </POScriptBox>
+                     <POScriptBox title="The 'Compared to What?' Script">
+                        <p>It's an investment of {offer.price}.</p>
+                        <p className="mt-2">[Pause, let them respond].</p>
+                        <p className="mt-2">Let me ask you, what is the cost of NOT solving [their biggest problem: "{playbook.diagnosis.constraints[0]}"] right now? When you compare the price to the cost of staying stuck, which one feels more expensive?</p>
+                    </POScriptBox>
+                 </main>
+            </POGuidePage>
         </>
     );
 };
@@ -71,50 +102,55 @@ const EnhancingOfferGuide: React.FC<{ playbook: GeneratedPlaybook }> = ({ playbo
     const offer = playbook.offer1;
     return (
         <>
-            <GuidePage>
+            <POGuidePage>
                 <header className="text-center mb-12 pb-6">
-                    <p className="font-bold text-yellow-600">OFFER ENHANCEMENT WORKSHOP</p>
-                    <Title>Making Your Offer Sparkle</Title>
-                    <Subtitle>The five magic spells that make your offer, "{offer.name}", impossible to resist.</Subtitle>
+                    <p className="font-bold text-yellow-600">OFFER MASTERCLASS</p>
+                    <POTitle>The Conversion Multiplier Kit</POTitle>
+                    <POSubtitle>Five "done-for-you" strategies to make your offer, "{offer.name}", impossible to resist.</POSubtitle>
                 </header>
                 <main>
-                    <P>A great offer is more than just the items in the box. It's about how you frame it. Let's apply the five key enhancers to your offer.</P>
+                    <POP>A great offer is more than just the items in the box. It's about the psychological triggers you wrap around it. Here are ready-to-use tactics for your business.</POP>
                     
-                    <WorksheetBox title="Spell #1: Scarcity (Quantity Limit)">
-                        <P className="text-sm">People want what is rare. How can you limit the number of people who can buy your offer? Be honest about your capacity.</P>
-                        <p className="font-semibold text-gray-700 mt-2">Brainstorm 2-3 ways to add REAL scarcity:</p>
-                        <BlankLines lines={3} />
-                    </WorksheetBox>
+                    <POSectionTitle>Scarcity & Urgency: The "Why Now?" Triggers</POSectionTitle>
+                    <POActionBox title="Tactic 1: Scarcity (Limited Quantity)" icon=" scarcity">
+                        <POP>People want what is rare. Here are three ways to add REAL scarcity to your offer. Pick one and stick to it.</POP>
+                        <ul className="list-decimal pl-5 mt-2 space-y-2 text-sm">
+                            <li><strong>"The Capacity Limit":</strong> "To ensure every client gets my full attention, I can only take on <strong>[e.g., 5]</strong> new clients for the '{offer.name}' this month."</li>
+                            <li><strong>"The Cohort Model":</strong> "Enrollment for the Spring cohort of '{offer.name}' closes this Friday, and the next one won't open for 3 months."</li>
+                            <li><strong>"The Bonus Limit":</strong> "The first <strong>[e.g., 10]</strong> people who sign up this week will also get my [Bonus Offer Name] for free."</li>
+                        </ul>
+                    </POActionBox>
 
-                     <WorksheetBox title="Spell #2: Urgency (Time Limit)">
-                        <P className="text-sm">This creates a reason to buy NOW. How can you add a deadline?</P>
-                        <p className="font-semibold text-gray-700 mt-2">Brainstorm 2-3 ways to add REAL urgency:</p>
-                         <BlankLines lines={3} />
-                    </WorksheetBox>
+                     <POActionBox title="Tactic 2: Urgency (Limited Time)" icon="⏱️">
+                        <POP>This creates a reason to buy NOW. Here are two powerful urgency tactics.</POP>
+                         <ul className="list-decimal pl-5 mt-2 space-y-2 text-sm">
+                            <li><strong>"The Price Increase":</strong> "Just a heads-up, the price for '{offer.name}' will be increasing to <strong>[e.g., {parseInt(offer.price.replace(/[^0-9]/g,'')) * 1.25}]</strong> on the 1st of next month due to high demand."</li>
+                            <li><strong>"The Deadline":</strong> "This special offer of {offer.price} is only available until Friday at midnight."</li>
+                        </ul>
+                    </POActionBox>
                 </main>
-            </GuidePage>
-            <GuidePage>
+            </POGuidePage>
+            <POGuidePage>
                 <main>
-                    <SectionTitle>More Magic Spells...</SectionTitle>
-                    <WorksheetBox title="Spell #3: Bonuses (Free Extras)">
-                        <P className="text-sm">Bonuses increase the value massively. A good bonus solves the *next* problem your customer will have. Your offer stack already has great items. Can you add one more exclusive bonus for fast-action takers?</P>
-                        <p className="font-semibold text-gray-700 mt-2">Brainstorm 1-2 high-value bonuses:</p>
-                        <BlankLines lines={2} />
-                    </WorksheetBox>
+                    <POSectionTitle>Value Maximizers: Bonuses & Guarantees</POSectionTitle>
+                    <POActionBox title="Tactic 3: Bonuses (The Value Stack)" icon="🎁">
+                        <POP>Bonuses increase the perceived value of your offer. A great bonus solves the *next* problem your customer will have after buying your product. Here are 3 bonus ideas generated for you:</POP>
+                         <ul className="list-decimal pl-5 mt-2 space-y-2 text-sm">
+                            <li><strong>Bonus Idea 1 (Tool):</strong> Offer a "[Tool Name, e.g., '30-Day Progress Tracker Spreadsheet']" that helps them implement your solution more easily.</li>
+                             <li><strong>Bonus Idea 2 (Support):</strong> Offer a "[Support Offer, e.g., 'Private Kick-off Call with Me']" to ensure they start correctly.</li>
+                              <li><strong>Bonus Idea 3 (Future-Pacing):</strong> Offer a "[Next Step Product, e.g., 'The 'Maintain Your Results' Mini-Course']" that helps them keep their results long-term.</li>
+                        </ul>
+                    </POActionBox>
 
-                    <WorksheetBox title="Spell #4: Guarantees (Risk Reversal)">
-                        <P className="text-sm">A strong guarantee removes all fear. Your current guarantee is: <strong>"{offer.guarantee}"</strong>. How can we make it even stronger? The crazier the guarantee, the more believable your offer becomes.</P>
-                         <p className="font-semibold text-gray-700 mt-2">Rewrite your guarantee to be even more powerful:</p>
-                        <BlankLines lines={3} />
-                    </WorksheetBox>
-                    
-                    <WorksheetBox title="Spell #5: Naming (The Promise)">
-                        <P className="text-sm">A name should be a promise. Your current offer name is: <strong>"{offer.name}"</strong>. Does it clearly state the dream outcome? Let's try to make it even more benefit-driven.</P>
-                        <p className="font-semibold text-gray-700 mt-2">Brainstorm 2 alternative, benefit-focused names:</p>
-                        <BlankLines lines={2} />
-                    </WorksheetBox>
+                    <POActionBox title="Tactic 4: Guarantees (The Risk Reversal)" icon="🛡️">
+                        <POP>A strong guarantee removes all fear. Your current guarantee is good: <em>"{offer.guarantee}"</em>. Let's explore making it even more powerful.</POP>
+                        <ul className="list-decimal pl-5 mt-2 space-y-2 text-sm">
+                            <li><strong>Conditional Guarantee (Stronger):</strong> "If you [complete a specific action, e.g., 'attend all the sessions'] and don't achieve [specific result], I will not only refund your money but also [pay for a competitor's product / give you an extra $100]."</li>
+                            <li><strong>Unconditional Guarantee (Strongest):</strong> "Try the '{offer.name}' for 30 days. If you're not 100% thrilled for any reason at all, just let us know and we'll give you a full, cheerful refund. No questions asked."</li>
+                        </ul>
+                    </POActionBox>
                 </main>
-            </GuidePage>
+            </POGuidePage>
         </>
     );
 };
